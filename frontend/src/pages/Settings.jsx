@@ -17,7 +17,7 @@ export default function Settings() {
       await axios.post("http://localhost:8000/api/settings", { hf_token: hfToken });
       setMessage("Settings saved successfully!");
       setTimeout(() => setMessage(""), 3000);
-    } catch (err) {
+    } catch {
       setMessage("Error saving settings");
     }
   };
