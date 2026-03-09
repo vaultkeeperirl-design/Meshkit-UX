@@ -1,0 +1,129 @@
+import { useState } from "react";
+import { Box, Settings2, Play } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+export default function Quantizer() {
+  const [modelPath, setModelPath] = useState("./merged_model");
+  const [f16Path, setF16Path] = useState("./merged_model_f16.gguf");
+  const [quantPath, setQuantPath] = useState("./merged_model_q4_k_m.gguf");
+  const [qType, setQType] = useState("q4_k_m");
+  const navigate = useNavigate();
+
+  const handleRunF16 = () => {
+    localStorage.setItem("runCommand", JSON.stringify({
+      action: "convert_f16",
+      model_path: modelPath
+    }));
+    navigate("/logs");
+  };
+
+  const handleRunQuant = () => {
+    localStorage.setItem("runCommand", JSON.stringify({
+      action: "quantize",
+      input_model: f16Path,
+      output_model: quantPath,
+      qtype: qType
+    }));
+    navigate("/logs");
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="border-b border-slate-700 pb-5">
+        <h3 className="text-2xl font-semibold leading-6 text-white">Llama.cpp Quantizer</h3>
+        <p className="mt-2 max-w-4xl text-sm text-slate-400">
+          Convert your HuggingFace merged models to GGUF format and quantize them for LM Studio.
+        </p>
+      </div>
+
+      {/* Step 1: Convert to F16 */}
+      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h4 className="text-lg font-medium text-white flex items-center gap-2">
+            <Settings2 size={20} className="text-blue-400" /> Step 1: Convert HuggingFace to GGUF (F16)
+        </h4>
+        <p className="text-sm text-slate-400 mb-4">
+            Before quantizing, the model must be converted to an uncompressed GGUF format.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium leading-6 text-white">Input Model Path</label>
+            <input
+              type="text"
+              value={modelPath}
+              onChange={(e) => setModelPath(e.target.value)}
+              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium leading-6 text-white">Output Path (Optional)</label>
+            <input
+              type="text"
+              value={f16Path}
+              onChange={(e) => setF16Path(e.target.value)}
+              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={handleRunF16}
+          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors"
+        >
+          <Play size={16} /> Run F16 Conversion
+        </button>
+      </div>
+
+      {/* Step 2: Quantize */}
+      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+        <h4 className="text-lg font-medium text-white flex items-center gap-2">
+            <Box size={20} className="text-purple-400" /> Step 2: Quantize GGUF
+        </h4>
+        <p className="text-sm text-slate-400 mb-4">
+            Compress the F16 GGUF model into a smaller format (e.g., 4-bit) for faster inference.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium leading-6 text-white">Input F16 GGUF Path</label>
+            <input
+              type="text"
+              value={f16Path}
+              onChange={(e) => setF16Path(e.target.value)}
+              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium leading-6 text-white">Quantization Type</label>
+            <select
+                value={qType}
+                onChange={(e) => setQType(e.target.value)}
+                className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+            >
+                <option value="q4_k_m">Q4_K_M (Recommended)</option>
+                <option value="q5_k_m">Q5_K_M</option>
+                <option value="q8_0">Q8_0 (High Quality)</option>
+                <option value="q3_k_m">Q3_K_M (Smallest)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium leading-6 text-white">Final Output Path</label>
+            <input
+              type="text"
+              value={quantPath}
+              onChange={(e) => setQuantPath(e.target.value)}
+              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={handleRunQuant}
+          className="flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 transition-colors"
+        >
+          <Play size={16} /> Run Quantization
+        </button>
+      </div>
+    </div>
+  );
+}

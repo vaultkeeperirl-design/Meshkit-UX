@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+huggingface_hub
+mergekit
+transformers
+torch
+accelerate
+safetensors
+python-multipart
+websockets
+httpx
