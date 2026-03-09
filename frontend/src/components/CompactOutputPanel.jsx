@@ -1,29 +1,49 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProcessLogs from "../pages/ProcessLogs";
+import { Copy, Check } from "lucide-react";
 
-export default function CompactOutputPanel({ yamlPreview }) {
+export default function CompactOutputPanel({ yamlPreview, copied, setCopied }) {
   const [activeTab, setActiveTab] = useState("yaml");
 
   return (
     <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col min-h-[400px]">
         {/* Header Tabs */}
-        <div className="flex border-b border-slate-800 mb-4">
-            <button
-                onClick={() => setActiveTab("yaml")}
-                className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
-                    activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 hover:text-slate-300"
-                }`}
-            >
-                YAML Output
-            </button>
-            <button
-                onClick={() => setActiveTab("logs")}
-                className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
-                    activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 hover:text-slate-300"
-                }`}
-            >
-                Process & Logs
-            </button>
+        <div className="flex justify-between items-center border-b border-slate-800 mb-4">
+            <div className="flex">
+                <button
+                    onClick={() => setActiveTab("yaml")}
+                    className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
+                        activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 hover:text-slate-300"
+                    }`}
+                >
+                    YAML Output
+                </button>
+                <button
+                    onClick={() => setActiveTab("logs")}
+                    className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
+                        activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 hover:text-slate-300"
+                    }`}
+                >
+                    Process & Logs
+                </button>
+            </div>
+            {activeTab === "yaml" && (
+                <button
+                    onClick={() => {
+                        if (yamlPreview) {
+                            navigator.clipboard.writeText(yamlPreview);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                        }
+                    }}
+                    disabled={!yamlPreview}
+                    className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 mr-2"
+                    aria-label="Copy YAML to clipboard"
+                    title="Copy YAML"
+                >
+                    {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                </button>
+            )}
         </div>
 
         {/* Tab Content */}

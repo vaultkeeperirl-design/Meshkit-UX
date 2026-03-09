@@ -68,7 +68,7 @@ export default function MergeBuilder() {
           setCompatibilityIssue(null);
         }
 
-      } catch (err) {
+      } catch {
         setCompatibilityIssue(null);
       }
     };
@@ -183,7 +183,7 @@ export default function MergeBuilder() {
                   placeholder="t: 0.5&#10;density: 0.5"
                   className="block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6 font-mono h-24"
                />
-               <p className="mt-2 text-xs text-slate-500">One per line, e.g. `key: value`</p>
+               <p className="mt-2 text-xs text-slate-500">One per line, e.g. \`key: value\`</p>
             </div>
           </div>
 
@@ -249,82 +249,14 @@ export default function MergeBuilder() {
                 models={models}
             />
             <div className="flex-1 min-h-[400px]">
-                <CompactOutputPanel yamlPreview={yamlPreview} />
+                <CompactOutputPanel
+                    yamlPreview={yamlPreview}
+                    copied={copied}
+                    setCopied={setCopied}
+                />
             </div>
         </div>
       </div>
     </div>
   );
-}
-
-function DynamicVisualizer({ method, baseModel, models }) {
-    // Determine active models to show
-    const activeModels = [];
-    if (["ties", "dare_ties", "dare_linear", "passthrough"].includes(method) && baseModel) {
-        activeModels.push({ type: 'base', name: baseModel.split('/').pop() || 'Base Model' });
-    }
-    models.forEach((m, idx) => {
-        if (m.model_id) activeModels.push({ type: 'merge', name: m.model_id.split('/').pop() || `Model ${idx + 1}` });
-    });
-
-    return (
-        <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex flex-col items-center justify-center min-h-[250px] space-y-4">
-            <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider w-full border-b border-slate-700 pb-2 text-left">Merge Visualization</h4>
-
-            {activeModels.length === 0 ? (
-                <div className="text-slate-500 text-sm">Add models to visualize architecture</div>
-            ) : (
-                <div className="flex flex-col items-center gap-4 w-full pt-4">
-                   <div className="flex flex-wrap justify-center gap-4 w-full">
-                       {activeModels.map((m, i) => (
-                           <div key={i} className={`px-4 py-2 rounded border text-sm text-center ${m.type === 'base' ? 'bg-blue-900/30 border-blue-700 text-blue-300' : 'bg-slate-700 border-slate-600 text-slate-200'}`}>
-                               {m.name}
-                           </div>
-                       ))}
-                   </div>
-
-                   {activeModels.length > 1 && (
-                       <>
-                           <div className="h-6 w-px bg-slate-600"></div>
-                           <div className="px-6 py-2 rounded-full bg-purple-900/50 border border-purple-700 text-purple-300 text-sm font-mono font-bold">
-                               {method.toUpperCase()}
-                           </div>
-                           <div className="h-6 w-px bg-slate-600"></div>
-                           <div className="px-8 py-3 rounded-lg bg-green-900/30 border border-green-700 text-green-400 font-bold shadow-[0_0_15px_rgba(74,222,128,0.1)]">
-                               Merged Output
-                           </div>
-                       </>
-                   )}
-                </div>
-            )}
-        </div>
-    );
-}
-
-function CompactOutputPanel({ yamlPreview, copied, setCopied }) {
-    return (
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col relative">
-            <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
-                <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">YAML Output</h4>
-                <button
-                    onClick={() => {
-                        if (yamlPreview) {
-                            navigator.clipboard.writeText(yamlPreview);
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                        }
-                    }}
-                    disabled={!yamlPreview}
-                    className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
-                    aria-label="Copy YAML to clipboard"
-                    title="Copy YAML"
-                >
-                    {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-                </button>
-            </div>
-            <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-2 bg-black/50 rounded-lg">
-                {yamlPreview || "# Click generate to preview configuration"}
-            </pre>
-        </div>
-    );
 }
