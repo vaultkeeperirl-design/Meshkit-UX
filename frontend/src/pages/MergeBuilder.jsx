@@ -6,6 +6,7 @@ import CompactOutputPanel from "../components/CompactOutputPanel";
 
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
+  const [copied, setCopied] = useState(false);
   const [baseModel, setBaseModel] = useState("");
   const [models, setModels] = useState([{ model_id: "", parameters: "" }]);
   const [globalParams, setGlobalParams] = useState("");
@@ -67,7 +68,7 @@ export default function MergeBuilder() {
           setCompatibilityIssue(null);
         }
 
-      } catch (err) {
+      } catch {
         setCompatibilityIssue(null);
       }
     };
@@ -182,21 +183,29 @@ export default function MergeBuilder() {
                   placeholder="t: 0.5&#10;density: 0.5"
                   className="block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6 font-mono h-24"
                />
-               <p className="mt-2 text-xs text-slate-500">One per line, e.g. `key: value`</p>
+               <p className="mt-2 text-xs text-slate-500">One per line, e.g. \`key: value\`</p>
             </div>
           </div>
 
           <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="text-lg font-medium text-white">Models</h4>
-              <button onClick={handleAddModel} className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300">
+              <button
+                onClick={handleAddModel}
+                className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-2 py-1 hover:bg-blue-400/10"
+              >
                 <Plus size={16} /> Add Model
               </button>
             </div>
 
             {models.map((m, idx) => (
-              <div key={idx} className="bg-slate-900 p-4 rounded-lg border border-slate-700 relative">
-                <button onClick={() => handleRemoveModel(idx)} className="absolute top-4 right-4 text-red-400 hover:text-red-300">
+              <div key={idx} className="bg-slate-900 p-4 rounded-lg border border-slate-700 relative group">
+                <button
+                  onClick={() => handleRemoveModel(idx)}
+                  className="absolute top-4 right-4 text-red-400 hover:text-red-300 transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-red-500 rounded p-1.5 hover:bg-red-400/10 opacity-70 group-hover:opacity-100"
+                  aria-label="Remove model"
+                  title="Remove model"
+                >
                   <Trash size={16} />
                 </button>
                 <div className="space-y-4">
@@ -240,7 +249,11 @@ export default function MergeBuilder() {
                 models={models}
             />
             <div className="flex-1 min-h-[400px]">
-                <CompactOutputPanel yamlPreview={yamlPreview} />
+                <CompactOutputPanel
+                    yamlPreview={yamlPreview}
+                    copied={copied}
+                    setCopied={setCopied}
+                />
             </div>
         </div>
       </div>

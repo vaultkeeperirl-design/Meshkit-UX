@@ -14,6 +14,10 @@ Mergekit Studio is a powerful, local UI for [mergekit](https://github.com/arcee-
 ### Merge Builder
 ![Merge Builder](frontend/public/merge_builder.png)
 
+### Llama.cpp Quantizer
+![Quantizer](frontend/public/quantizer.png)
+
+
 ## Setup & Installation
 
 **Prerequisites:** You must have Python 3 and Node.js installed on your system.
