@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Terminal, Play, StopCircle } from "lucide-react";
 
-export default function ProcessLogs() {
+export default function ProcessLogs({ isCompact }) {
   const [logs, setLogs] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
@@ -74,15 +74,17 @@ export default function ProcessLogs() {
   };
 
   return (
-    <div className="space-y-6 flex flex-col h-full">
-      <div className="border-b border-slate-700 pb-5">
-        <h3 className="text-2xl font-semibold leading-6 text-white">Process & Logs</h3>
-        <p className="mt-2 max-w-4xl text-sm text-slate-400">
-          Run merge and quantization jobs. View real-time output.
-        </p>
-      </div>
+    <div className={`space-y-4 flex flex-col h-full ${isCompact ? '' : 'p-6'}`}>
+      {!isCompact && (
+        <div className="border-b border-slate-700 pb-5">
+          <h3 className="text-2xl font-semibold leading-6 text-white">Process & Logs</h3>
+          <p className="mt-2 max-w-4xl text-sm text-slate-400">
+            Run merge and quantization jobs. View real-time output.
+          </p>
+        </div>
+      )}
 
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-4 mb-2">
          <button
           onClick={handleStartMerge}
           disabled={isConnected}
@@ -100,11 +102,13 @@ export default function ProcessLogs() {
          </button>
       </div>
 
-      <div className="bg-slate-950 p-6 rounded-xl border border-slate-700 flex-1 flex flex-col min-h-[500px]">
-        <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2 flex items-center gap-2">
-            <Terminal size={16} /> Terminal Output
-        </h4>
-        <div className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto bg-black p-4 rounded-lg">
+      <div className={`flex-1 flex flex-col ${isCompact ? 'bg-black min-h-0' : 'bg-slate-950 p-6 rounded-xl border border-slate-700 min-h-[500px]'}`}>
+        {!isCompact && (
+          <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2 flex items-center gap-2">
+              <Terminal size={16} /> Terminal Output
+          </h4>
+        )}
+        <div className={`text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto ${isCompact ? 'p-2' : 'bg-black p-4 rounded-lg'}`}>
           {logs.length === 0 ? (
              <span className="text-slate-600">No active process. Ready...</span>
           ) : (

@@ -14,14 +14,8 @@ Mergekit Studio is a powerful, local UI for [mergekit](https://github.com/arcee-
 ### Merge Builder
 ![Merge Builder](frontend/public/merge_builder.png)
 
-### Network Visualizer
-![Network Visualizer](frontend/public/network_visualizer.png)
-
 ### Llama.cpp Quantizer
 ![Quantizer](frontend/public/quantizer.png)
-
-### Process Logs
-![Process Logs](frontend/public/process_logs.png)
 
 
 ## Setup & Installation
