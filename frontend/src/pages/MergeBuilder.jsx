@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { Plus, Trash, Activity } from "lucide-react";
+import { Plus, Trash, Activity, AlertTriangle } from "lucide-react";
+import DynamicVisualizer from "../components/DynamicVisualizer";
+import CompactOutputPanel from "../components/CompactOutputPanel";
 
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
@@ -8,8 +10,71 @@ export default function MergeBuilder() {
   const [models, setModels] = useState([{ model_id: "", parameters: "" }]);
   const [globalParams, setGlobalParams] = useState("");
   const [yamlPreview, setYamlPreview] = useState("");
+  const [compatibilityIssue, setCompatibilityIssue] = useState(null);
 
   const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
+
+  useEffect(() => {
+    const checkCompatibility = async () => {
+      const uniqueModels = new Set();
+      if (baseModel.trim()) uniqueModels.add(baseModel.trim());
+      models.forEach(m => {
+        if (m.model_id.trim()) uniqueModels.add(m.model_id.trim());
+      });
+
+      const modelList = Array.from(uniqueModels);
+      if (modelList.length < 2) {
+        setCompatibilityIssue(null);
+        return;
+      }
+
+      try {
+        const configs = [];
+        for (const mId of modelList) {
+          try {
+            const res = await axios.post("http://localhost:8000/api/hf/config", { model_id: mId });
+            configs.push({ id: mId, data: res.data });
+          } catch (err) {
+            // Ignore API fetch errors for individual models (might just be a typo while typing)
+            console.warn(`Failed to fetch config for ${mId}`, err);
+          }
+        }
+
+        if (configs.length < 2) {
+          setCompatibilityIssue(null);
+          return;
+        }
+
+        // Compare all fetched configs against the first one
+        const baseCfg = configs[0].data;
+        const issues = [];
+
+        for (let i = 1; i < configs.length; i++) {
+          const cmpCfg = configs[i].data;
+          const cmpId = configs[i].id;
+
+          if (baseCfg.hidden_size !== cmpCfg.hidden_size) {
+            issues.push(`${cmpId} hidden size (${cmpCfg.hidden_size}) mismatches base (${baseCfg.hidden_size})`);
+          }
+          if (baseCfg.num_layers !== cmpCfg.num_layers) {
+            issues.push(`${cmpId} layers (${cmpCfg.num_layers}) mismatches base (${baseCfg.num_layers})`);
+          }
+        }
+
+        if (issues.length > 0) {
+          setCompatibilityIssue(issues.join(". "));
+        } else {
+          setCompatibilityIssue(null);
+        }
+
+      } catch (err) {
+        setCompatibilityIssue(null);
+      }
+    };
+
+    const timeoutId = setTimeout(checkCompatibility, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [baseModel, models]);
 
   const handleAddModel = () => setModels([...models, { model_id: "", parameters: "" }]);
 
@@ -71,9 +136,19 @@ export default function MergeBuilder() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-8 xl:grid-cols-2">
         {/* Left Column: Form */}
-        <div className="md:col-span-2 space-y-6">
+        <div className="space-y-6">
+          {compatibilityIssue && (
+              <div className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3">
+                  <AlertTriangle className="text-red-500 mt-0.5" size={20} />
+                  <div>
+                      <h4 className="text-sm font-medium text-red-400">Compatibility Warning</h4>
+                      <p className="text-sm text-red-300 mt-1">{compatibilityIssue}</p>
+                  </div>
+              </div>
+          )}
+
           <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
             <div>
               <label className="block text-sm font-medium leading-6 text-white">Merge Method</label>
@@ -157,14 +232,16 @@ export default function MergeBuilder() {
           </button>
         </div>
 
-        {/* Right Column: Preview */}
-        <div className="md:col-span-1">
-          <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col">
-            <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">YAML Output</h4>
-            <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-2 bg-black/50 rounded-lg">
-              {yamlPreview || "# Click generate to preview configuration"}
-            </pre>
-          </div>
+        {/* Right Column: Visualizer & Output */}
+        <div className="xl:col-span-1 space-y-6 flex flex-col h-full">
+            <DynamicVisualizer
+                method={method}
+                baseModel={baseModel}
+                models={models}
+            />
+            <div className="flex-1 min-h-[400px]">
+                <CompactOutputPanel yamlPreview={yamlPreview} />
+            </div>
         </div>
       </div>
     </div>
