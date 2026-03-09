@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -93,9 +93,13 @@ jobs:
         name: MergekitStudio-Setup
         path: frontend/dist-electron/*.exe
 
-    - name: Create GitHub Release
+    - name: Update Latest Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       shell: bash
       run: |
-        gh release create ${{ github.ref_name }} frontend/dist-electron/*.exe --title "Release ${{ github.ref_name }}" --generate-notes
+        # Delete existing release and tag if it exists
+        gh release delete latest --cleanup-tag -y || true
+
+        # Create a new latest release
+        gh release create latest frontend/dist-electron/*.exe --title "Latest Build" --notes "Automated build from latest commit on main branch."
