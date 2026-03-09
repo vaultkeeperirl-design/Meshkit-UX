@@ -1,0 +1,4 @@
+# Forge's Journal - Critical Learnings
+
+- **Platform-specific build failures:** Windows paths use backslashes instead of forward slashes, which might cause shell scripting differences (sh vs pwsh) in GitHub Actions when building release artifacts. Ensuring we use cross-platform compatible CLI commands or use built-in Action functionality prevents path separation issues on Windows.
+- **Cache restoration/invalidation:** Node and Python package caching behaves differently. In GitHub Actions, utilizing `actions/setup-node` with `cache: 'npm'` and `actions/setup-python` with `cache: 'pip'` allows for efficient caching while making sure we check package lockfiles or requirements txt files to detect any invalidation without downloading dependencies every time from scratch.
