@@ -1,9 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
-import { Plus, Trash, Activity } from "lucide-react";
+import { Plus, Trash, Activity, Copy, Check } from "lucide-react";
 
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
+  const [copied, setCopied] = useState(false);
   const [baseModel, setBaseModel] = useState("");
   const [models, setModels] = useState([{ model_id: "", parameters: "" }]);
   const [globalParams, setGlobalParams] = useState("");
@@ -114,14 +115,22 @@ export default function MergeBuilder() {
           <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="text-lg font-medium text-white">Models</h4>
-              <button onClick={handleAddModel} className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300">
+              <button
+                onClick={handleAddModel}
+                className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-2 py-1 hover:bg-blue-400/10"
+              >
                 <Plus size={16} /> Add Model
               </button>
             </div>
 
             {models.map((m, idx) => (
-              <div key={idx} className="bg-slate-900 p-4 rounded-lg border border-slate-700 relative">
-                <button onClick={() => handleRemoveModel(idx)} className="absolute top-4 right-4 text-red-400 hover:text-red-300">
+              <div key={idx} className="bg-slate-900 p-4 rounded-lg border border-slate-700 relative group">
+                <button
+                  onClick={() => handleRemoveModel(idx)}
+                  className="absolute top-4 right-4 text-red-400 hover:text-red-300 transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-red-500 rounded p-1.5 hover:bg-red-400/10 opacity-70 group-hover:opacity-100"
+                  aria-label="Remove model"
+                  title="Remove model"
+                >
                   <Trash size={16} />
                 </button>
                 <div className="space-y-4">
@@ -159,8 +168,25 @@ export default function MergeBuilder() {
 
         {/* Right Column: Preview */}
         <div className="md:col-span-1">
-          <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col">
-            <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">YAML Output</h4>
+          <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col relative">
+            <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
+              <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">YAML Output</h4>
+              <button
+                onClick={() => {
+                  if (yamlPreview) {
+                    navigator.clipboard.writeText(yamlPreview);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }
+                }}
+                disabled={!yamlPreview}
+                className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
+                aria-label="Copy YAML to clipboard"
+                title="Copy YAML"
+              >
+                {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+              </button>
+            </div>
             <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-2 bg-black/50 rounded-lg">
               {yamlPreview || "# Click generate to preview configuration"}
             </pre>
