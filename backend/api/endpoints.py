@@ -2,10 +2,12 @@ from fastapi import APIRouter, HTTPException, WebSocket, Depends
 from api.models import HFConfigReq, MergeConfigReq, QuantizeConfigReq
 from services.hf_client import get_model_config
 from services.merge_runner import MergeRunner
+from core.utils import get_tool_path
 import json
 import os
 import asyncio
 from fastapi.responses import JSONResponse
+import sys
 
 router = APIRouter()
 runner = MergeRunner()
@@ -76,7 +78,8 @@ async def websocket_logs(websocket: WebSocket):
         elif action == "convert_f16":
              # Llama.cpp convert script
              model_path = request.get("model_path")
-             cmd = ["python3", "tools/llama.cpp/convert_hf_to_gguf.py", model_path, "--outtype", "f16"]
+             convert_script = get_tool_path("llama.cpp", "convert_hf_to_gguf.py")
+             cmd = [sys.executable, convert_script, model_path, "--outtype", "f16"]
              await websocket.send_text(f"Starting conversion to F16: {' '.join(cmd)}")
              await local_runner.run_command_with_websocket(cmd, websocket, task_name="F16 Conversion")
 
@@ -86,7 +89,11 @@ async def websocket_logs(websocket: WebSocket):
              output_model = request.get("output_model")
              qtype = request.get("qtype", "q4_k_m")
 
-             cmd = ["tools/llama.cpp/llama-quantize", input_model, output_model, qtype]
+             # Handle Windows executable extension
+             exe_ext = ".exe" if sys.platform == "win32" else ""
+             quantize_bin = get_tool_path("llama.cpp", f"llama-quantize{exe_ext}")
+
+             cmd = [quantize_bin, input_model, output_model, qtype]
              await websocket.send_text(f"Starting Quantization: {' '.join(cmd)}")
              await local_runner.run_command_with_websocket(cmd, websocket, task_name="Quantization")
 
