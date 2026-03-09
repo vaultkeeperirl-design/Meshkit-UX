@@ -38,7 +38,7 @@ export default function MergeBuilder() {
         obj[k] = isNaN(numV) ? v : numV;
       });
       return obj;
-    } catch (e) {
+    } catch {
       return null;
     }
   };
