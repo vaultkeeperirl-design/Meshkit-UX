@@ -10,22 +10,12 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Clone mergekit and llama.cpp
-echo "Cloning required repositories..."
-mkdir -p tools
+# Build mergekit and llama.cpp
+echo "Building required tools..."
 cd tools
-
-# Mergekit is installed via pip (requirements.txt), but we clone for reference/scripts if needed
-if [ ! -d "mergekit" ]; then
-    git clone https://github.com/arcee-ai/mergekit.git
-fi
 
 # llama.cpp
 if [ ! -f "llama.cpp/llama-quantize" ]; then
-    if [ ! -d "llama.cpp" ] || [ -z "$(ls -A llama.cpp)" ]; then
-        rm -rf llama.cpp
-        git clone https://github.com/ggerganov/llama.cpp.git
-    fi
     cd llama.cpp
 
     # We will compile it so it is cross platform

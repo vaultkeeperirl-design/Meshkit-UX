@@ -11,6 +11,19 @@ __pycache__/
 *.pyc
 *.pyo
 
+# Tool artifacts (llama.cpp)
+backend/tools/llama.cpp/build/
+backend/tools/llama.cpp/llama-*
+backend/tools/llama.cpp/*.o
+backend/tools/llama.cpp/*.so
+backend/tools/llama.cpp/*.dylib
+backend/tools/llama.cpp/*.dll
+
+# Tool artifacts (mergekit)
+backend/tools/mergekit/build/
+backend/tools/mergekit/dist/
+backend/tools/mergekit/*.egg-info/
+
 # Logs
 *.log
 settings.json
