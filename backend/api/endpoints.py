@@ -100,4 +100,5 @@ async def websocket_logs(websocket: WebSocket):
     except Exception as e:
         await websocket.send_text(f"WebSocket Error: {str(e)}")
     finally:
+        await local_runner.cancel_process()
         await websocket.close()
