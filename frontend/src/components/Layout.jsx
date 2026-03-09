@@ -43,7 +43,7 @@ export default function Layout() {
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden bg-slate-900 relative">
-        <main className="p-4 md:p-8 max-w-[1400px] mx-auto h-full flex flex-col">
+        <main className="h-full flex flex-col w-full">
           <MergeBuilder />
         </main>
       </div>
