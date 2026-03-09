@@ -38,12 +38,13 @@ class MergeRunner:
 
         return output_path
 
-    async def run_command_with_websocket(self, cmd: list, websocket: WebSocket):
+    async def run_command_with_websocket(self, cmd: list, websocket: WebSocket, env: dict = None, task_name: str = "Process"):
         """Runs a shell command and streams its output (stdout and stderr) to a websocket client."""
         process = await asyncio.create_subprocess_exec(
             *cmd,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT
+            stderr=asyncio.subprocess.STDOUT,
+            env=env
         )
         self.active_process = process
 
@@ -57,7 +58,7 @@ class MergeRunner:
             await websocket.send_text(f"Error streaming output: {str(e)}")
         finally:
             await process.wait()
-            await websocket.send_text(f"Process finished with return code: {process.returncode}")
+            await websocket.send_text(f"{task_name} finished with return code: {process.returncode}")
             self.active_process = None
 
     async def cancel_process(self):
