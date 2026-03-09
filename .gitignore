@@ -1,0 +1,16 @@
+# Dependencies
+backend/venv/
+frontend/node_modules/
+
+# Environment variables
+.env
+
+# Build files
+frontend/dist/
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+settings.json
