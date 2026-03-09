@@ -129,17 +129,17 @@ export default function MergeBuilder() {
   };
 
   return (
-    <div className="space-y-8 h-full flex flex-col">
-      <div className="border-b border-slate-700 pb-5 shrink-0">
-        <h3 className="text-2xl font-semibold leading-6 text-white">Merge Builder</h3>
-        <p className="mt-2 max-w-4xl text-sm text-slate-400">
-          Design your model merge configuration visually. Generates the required YAML for Mergekit.
-        </p>
-      </div>
+    <div className="h-full flex flex-col lg:flex-row">
+      {/* Left Area: Main Content */}
+      <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 md:p-8 space-y-8">
+        <div className="border-b border-slate-700 pb-5 shrink-0">
+          <h3 className="text-2xl font-semibold leading-6 text-white">Merge Builder</h3>
+          <p className="mt-2 max-w-4xl text-sm text-slate-400">
+            Design your model merge configuration visually. Generates the required YAML for Mergekit.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 gap-x-8 gap-y-8 xl:grid-cols-2 flex-1 min-h-0 pb-8">
-        {/* Left Column: Form */}
-        <div className="space-y-6 overflow-y-auto pr-2 pb-6">
+        <div className="max-w-4xl w-full space-y-6">
           {compatibilityIssue && (
               <div className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3">
                   <AlertTriangle className="text-red-500 mt-0.5" size={20} />
@@ -240,9 +240,10 @@ export default function MergeBuilder() {
             <Activity size={18} className="mr-2" /> Generate YAML Configuration
           </button>
         </div>
+      </div>
 
-        {/* Right Column: Visualizer & Output */}
-        <div className="xl:col-span-1 space-y-6 flex flex-col h-full overflow-y-auto pr-2 pb-6">
+      {/* Right Sidebar */}
+      <div className="w-full lg:w-[450px] xl:w-[500px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/50 p-4 md:p-6 flex flex-col h-full overflow-y-auto shrink-0 space-y-6 z-10 shadow-2xl">
             <DynamicVisualizer
                 method={method}
                 baseModel={baseModel}
@@ -256,7 +257,6 @@ export default function MergeBuilder() {
                 />
             </div>
         </div>
-      </div>
     </div>
   );
 }
