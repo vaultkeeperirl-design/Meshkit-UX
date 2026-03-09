@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Settings, GitMerge, Activity, Box, Terminal, X } from "lucide-react";
+import { Settings, GitMerge, Box, X } from "lucide-react";
 import MergeBuilder from "../pages/MergeBuilder";
 import Quantizer from "../pages/Quantizer";
 import SettingsPage from "../pages/Settings";
@@ -7,48 +7,43 @@ import SettingsPage from "../pages/Settings";
 export default function Layout() {
   const [openView, setOpenView] = useState(null);
 
-  const navItems = [
-    { name: "Merge Builder", view: null, icon: <GitMerge size={20} /> },
-    { name: "Quantizer", view: "quantizer", icon: <Box size={20} /> },
-    { name: "Settings", view: "settings", icon: <Settings size={20} /> },
-  ];
-
   return (
-    <div className="flex h-screen bg-slate-900 text-slate-100 font-sans overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-64 bg-slate-800 border-r border-slate-700 p-4 flex flex-col z-20">
-        <div className="flex items-center gap-2 mb-8 px-2">
+    <div className="flex flex-col h-screen bg-slate-900 text-slate-100 font-sans overflow-hidden">
+      {/* Header */}
+      <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/50 p-4 sticky top-0 z-10 backdrop-blur">
+        <div className="flex items-center gap-2 px-2">
           <GitMerge className="text-blue-500" size={28} />
           <h1 className="text-xl font-bold tracking-tight">Mergekit Studio</h1>
         </div>
-
-        <nav className="flex-1 space-y-2">
-          {navItems.map((item) => {
-            const isActive = openView === item.view;
-            return (
-              <button
-                key={item.name}
-                onClick={() => setOpenView(item.view)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-400 hover:bg-slate-700 hover:text-white"
-                }`}
-              >
-                {item.icon}
-                <span className="font-medium">{item.name}</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setOpenView("quantizer")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              openView === "quantizer"
+                ? "bg-blue-600 text-white"
+                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <Box size={20} />
+            <span className="font-medium">Quantizer</span>
+          </button>
+          <button
+            onClick={() => setOpenView("settings")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              openView === "settings"
+                ? "bg-blue-600 text-white"
+                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <Settings size={20} />
+            <span className="font-medium">Settings</span>
+          </button>
+        </div>
+      </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-auto bg-slate-900 relative">
-        <header className="border-b border-slate-800 bg-slate-900/50 p-4 sticky top-0 z-10 backdrop-blur">
-            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Workspace</h2>
-        </header>
-        <main className="p-8 max-w-6xl mx-auto">
+      <div className="flex-1 overflow-hidden bg-slate-900 relative">
+        <main className="p-4 md:p-8 max-w-[1400px] mx-auto h-full flex flex-col">
           <MergeBuilder />
         </main>
       </div>
