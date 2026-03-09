@@ -53,6 +53,8 @@ async def generate_merge_config(req: MergeConfigReq):
 @router.websocket("/ws/logs")
 async def websocket_logs(websocket: WebSocket):
     await websocket.accept()
+    # Each connection gets its own MergeRunner to track its own subprocess
+    local_runner = MergeRunner()
     # Wait for the client to tell us what command to run
     try:
         data = await websocket.receive_text()
@@ -69,41 +71,14 @@ async def websocket_logs(websocket: WebSocket):
             output_path = request.get("output_path", "./merged_model")
             cmd = ["mergekit-yaml", yaml_path, output_path, "--copy-tokenizer"]
             await websocket.send_text(f"Starting merge: {' '.join(cmd)}")
-
-            process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.STDOUT,
-                env=env
-            )
-
-            while True:
-                line = await process.stdout.readline()
-                if not line:
-                    break
-                await websocket.send_text(line.decode().rstrip())
-
-            await process.wait()
-            await websocket.send_text(f"Merge finished with return code: {process.returncode}")
+            await local_runner.run_command_with_websocket(cmd, websocket, env=env, task_name="Merge")
 
         elif action == "convert_f16":
              # Llama.cpp convert script
              model_path = request.get("model_path")
              cmd = ["python3", "tools/llama.cpp/convert_hf_to_gguf.py", model_path, "--outtype", "f16"]
              await websocket.send_text(f"Starting conversion to F16: {' '.join(cmd)}")
-
-             process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.STDOUT
-             )
-             while True:
-                line = await process.stdout.readline()
-                if not line:
-                    break
-                await websocket.send_text(line.decode().rstrip())
-             await process.wait()
-             await websocket.send_text(f"F16 Conversion finished with return code: {process.returncode}")
+             await local_runner.run_command_with_websocket(cmd, websocket, task_name="F16 Conversion")
 
         elif action == "quantize":
              # Llama.cpp quantize binary
@@ -113,19 +88,7 @@ async def websocket_logs(websocket: WebSocket):
 
              cmd = ["tools/llama.cpp/llama-quantize", input_model, output_model, qtype]
              await websocket.send_text(f"Starting Quantization: {' '.join(cmd)}")
-
-             process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.STDOUT
-             )
-             while True:
-                line = await process.stdout.readline()
-                if not line:
-                    break
-                await websocket.send_text(line.decode().rstrip())
-             await process.wait()
-             await websocket.send_text(f"Quantization finished with return code: {process.returncode}")
+             await local_runner.run_command_with_websocket(cmd, websocket, task_name="Quantization")
 
     except Exception as e:
         await websocket.send_text(f"WebSocket Error: {str(e)}")
