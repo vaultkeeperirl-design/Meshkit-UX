@@ -30,7 +30,8 @@ if [ ! -f "llama.cpp/llama-quantize" ]; then
 
     # We will compile it so it is cross platform
     echo "Compiling llama.cpp..."
-    make -j$(nproc)
+    cmake -B build && cmake --build build --config Release -j $(nproc)
+    cp build/bin/llama-quantize .
 
     # Install Python dependencies for llama.cpp conversion scripts
     pip install -r requirements.txt
