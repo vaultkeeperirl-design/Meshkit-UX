@@ -1,0 +1,47 @@
+import { useState, useEffect } from "react";
+import ProcessLogs from "../pages/ProcessLogs";
+
+export default function CompactOutputPanel({ yamlPreview }) {
+  const [activeTab, setActiveTab] = useState("yaml");
+
+  return (
+    <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col min-h-[400px]">
+        {/* Header Tabs */}
+        <div className="flex border-b border-slate-800 mb-4">
+            <button
+                onClick={() => setActiveTab("yaml")}
+                className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
+                    activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 hover:text-slate-300"
+                }`}
+            >
+                YAML Output
+            </button>
+            <button
+                onClick={() => setActiveTab("logs")}
+                className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
+                    activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 hover:text-slate-300"
+                }`}
+            >
+                Process & Logs
+            </button>
+        </div>
+
+        {/* Tab Content */}
+        <div className="flex-1 overflow-auto flex flex-col relative h-full">
+            {activeTab === "yaml" && (
+                <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-4 bg-black/50 rounded-lg">
+                    {yamlPreview || "# Click generate to preview configuration"}
+                </pre>
+            )}
+
+            {activeTab === "logs" && (
+                <div className="flex-1 rounded-lg overflow-hidden relative">
+                   <div className="absolute inset-0 bg-black/50 overflow-y-auto">
+                        <ProcessLogs isCompact={true} />
+                   </div>
+                </div>
+            )}
+        </div>
+    </div>
+  );
+}

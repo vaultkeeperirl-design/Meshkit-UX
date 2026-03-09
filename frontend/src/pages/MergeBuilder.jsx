@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { Plus, Trash, Activity, Copy, Check } from "lucide-react";
+import { Plus, Trash, Activity, Copy, Check, AlertTriangle } from "lucide-react";
 
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
@@ -9,8 +9,56 @@ export default function MergeBuilder() {
   const [models, setModels] = useState([{ model_id: "", parameters: "" }]);
   const [globalParams, setGlobalParams] = useState("");
   const [yamlPreview, setYamlPreview] = useState("");
+  const [compatibilityIssue, setCompatibilityIssue] = useState(null);
 
   const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
+
+  useEffect(() => {
+    // Auto-check compatibility if we have multiple models
+    const checkCompatibility = async () => {
+      const validModels = models.filter(m => m.model_id.length > 5);
+      const toCheck = [];
+      if (baseModel.length > 5) toCheck.push(baseModel);
+      toCheck.push(...validModels.map(m => m.model_id));
+
+      if (toCheck.length < 2) {
+          setCompatibilityIssue(null);
+          return;
+      }
+
+      try {
+        const configs = await Promise.all(
+            toCheck.map(id => axios.post("http://localhost:8000/api/hf/config", { model_id: id }).catch(() => null))
+        );
+
+        const validConfigs = configs.map(c => c?.data).filter(Boolean);
+        if (validConfigs.length < 2) return;
+
+        const baseCfg = validConfigs[0];
+        const issues = [];
+
+        for (let i = 1; i < validConfigs.length; i++) {
+         const cfg = validConfigs[i];
+         if (cfg.hidden_size !== baseCfg.hidden_size || cfg.num_layers !== baseCfg.num_layers) {
+            issues.push(`Architecture mismatch detected between models`);
+            break;
+         }
+        }
+
+        if (issues.length > 0) {
+          setCompatibilityIssue(issues.join(". "));
+        } else {
+          setCompatibilityIssue(null);
+        }
+
+      } catch (err) {
+        setCompatibilityIssue(null);
+      }
+    };
+
+    const timeoutId = setTimeout(checkCompatibility, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [baseModel, models]);
 
   const handleAddModel = () => setModels([...models, { model_id: "", parameters: "" }]);
 
@@ -72,9 +120,19 @@ export default function MergeBuilder() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-8 xl:grid-cols-2">
         {/* Left Column: Form */}
-        <div className="md:col-span-2 space-y-6">
+        <div className="space-y-6">
+          {compatibilityIssue && (
+              <div className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3">
+                  <AlertTriangle className="text-red-500 mt-0.5" size={20} />
+                  <div>
+                      <h4 className="text-sm font-medium text-red-400">Compatibility Warning</h4>
+                      <p className="text-sm text-red-300 mt-1">{compatibilityIssue}</p>
+                  </div>
+              </div>
+          )}
+
           <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
             <div>
               <label className="block text-sm font-medium leading-6 text-white">Merge Method</label>
@@ -166,33 +224,94 @@ export default function MergeBuilder() {
           </button>
         </div>
 
-        {/* Right Column: Preview */}
-        <div className="md:col-span-1">
-          <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col relative">
-            <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
-              <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">YAML Output</h4>
-              <button
-                onClick={() => {
-                  if (yamlPreview) {
-                    navigator.clipboard.writeText(yamlPreview);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
-                  }
-                }}
-                disabled={!yamlPreview}
-                className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
-                aria-label="Copy YAML to clipboard"
-                title="Copy YAML"
-              >
-                {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-              </button>
+        {/* Right Column: Visualizer & Output */}
+        <div className="xl:col-span-1 space-y-6 flex flex-col h-full">
+            <DynamicVisualizer
+                method={method}
+                baseModel={baseModel}
+                models={models}
+            />
+            <div className="flex-1 min-h-[400px]">
+                <CompactOutputPanel
+                    yamlPreview={yamlPreview}
+                    copied={copied}
+                    setCopied={setCopied}
+                />
             </div>
-            <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-2 bg-black/50 rounded-lg">
-              {yamlPreview || "# Click generate to preview configuration"}
-            </pre>
-          </div>
         </div>
       </div>
     </div>
   );
+}
+
+function DynamicVisualizer({ method, baseModel, models }) {
+    // Determine active models to show
+    const activeModels = [];
+    if (["ties", "dare_ties", "dare_linear", "passthrough"].includes(method) && baseModel) {
+        activeModels.push({ type: 'base', name: baseModel.split('/').pop() || 'Base Model' });
+    }
+    models.forEach((m, idx) => {
+        if (m.model_id) activeModels.push({ type: 'merge', name: m.model_id.split('/').pop() || `Model ${idx + 1}` });
+    });
+
+    return (
+        <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex flex-col items-center justify-center min-h-[250px] space-y-4">
+            <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider w-full border-b border-slate-700 pb-2 text-left">Merge Visualization</h4>
+
+            {activeModels.length === 0 ? (
+                <div className="text-slate-500 text-sm">Add models to visualize architecture</div>
+            ) : (
+                <div className="flex flex-col items-center gap-4 w-full pt-4">
+                   <div className="flex flex-wrap justify-center gap-4 w-full">
+                       {activeModels.map((m, i) => (
+                           <div key={i} className={`px-4 py-2 rounded border text-sm text-center ${m.type === 'base' ? 'bg-blue-900/30 border-blue-700 text-blue-300' : 'bg-slate-700 border-slate-600 text-slate-200'}`}>
+                               {m.name}
+                           </div>
+                       ))}
+                   </div>
+
+                   {activeModels.length > 1 && (
+                       <>
+                           <div className="h-6 w-px bg-slate-600"></div>
+                           <div className="px-6 py-2 rounded-full bg-purple-900/50 border border-purple-700 text-purple-300 text-sm font-mono font-bold">
+                               {method.toUpperCase()}
+                           </div>
+                           <div className="h-6 w-px bg-slate-600"></div>
+                           <div className="px-8 py-3 rounded-lg bg-green-900/30 border border-green-700 text-green-400 font-bold shadow-[0_0_15px_rgba(74,222,128,0.1)]">
+                               Merged Output
+                           </div>
+                       </>
+                   )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function CompactOutputPanel({ yamlPreview, copied, setCopied }) {
+    return (
+        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col relative">
+            <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
+                <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">YAML Output</h4>
+                <button
+                    onClick={() => {
+                        if (yamlPreview) {
+                            navigator.clipboard.writeText(yamlPreview);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                        }
+                    }}
+                    disabled={!yamlPreview}
+                    className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
+                    aria-label="Copy YAML to clipboard"
+                    title="Copy YAML"
+                >
+                    {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                </button>
+            </div>
+            <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-2 bg-black/50 rounded-lg">
+                {yamlPreview || "# Click generate to preview configuration"}
+            </pre>
+        </div>
+    );
 }
