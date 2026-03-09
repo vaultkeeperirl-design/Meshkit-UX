@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Plus, Trash, Activity, Copy, Check, AlertTriangle } from "lucide-react";
+import { Plus, Trash, Activity, AlertTriangle } from "lucide-react";
+import DynamicVisualizer from "../components/DynamicVisualizer";
+import CompactOutputPanel from "../components/CompactOutputPanel";
 
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
@@ -14,35 +16,50 @@ export default function MergeBuilder() {
   const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
 
   useEffect(() => {
-    // Auto-check compatibility if we have multiple models
     const checkCompatibility = async () => {
-      const validModels = models.filter(m => m.model_id.length > 5);
-      const toCheck = [];
-      if (baseModel.length > 5) toCheck.push(baseModel);
-      toCheck.push(...validModels.map(m => m.model_id));
+      const uniqueModels = new Set();
+      if (baseModel.trim()) uniqueModels.add(baseModel.trim());
+      models.forEach(m => {
+        if (m.model_id.trim()) uniqueModels.add(m.model_id.trim());
+      });
 
-      if (toCheck.length < 2) {
-          setCompatibilityIssue(null);
-          return;
+      const modelList = Array.from(uniqueModels);
+      if (modelList.length < 2) {
+        setCompatibilityIssue(null);
+        return;
       }
 
       try {
-        const configs = await Promise.all(
-            toCheck.map(id => axios.post("http://localhost:8000/api/hf/config", { model_id: id }).catch(() => null))
-        );
+        const configs = [];
+        for (const mId of modelList) {
+          try {
+            const res = await axios.post("http://localhost:8000/api/hf/config", { model_id: mId });
+            configs.push({ id: mId, data: res.data });
+          } catch (err) {
+            // Ignore API fetch errors for individual models (might just be a typo while typing)
+            console.warn(`Failed to fetch config for ${mId}`, err);
+          }
+        }
 
-        const validConfigs = configs.map(c => c?.data).filter(Boolean);
-        if (validConfigs.length < 2) return;
+        if (configs.length < 2) {
+          setCompatibilityIssue(null);
+          return;
+        }
 
-        const baseCfg = validConfigs[0];
+        // Compare all fetched configs against the first one
+        const baseCfg = configs[0].data;
         const issues = [];
 
-        for (let i = 1; i < validConfigs.length; i++) {
-         const cfg = validConfigs[i];
-         if (cfg.hidden_size !== baseCfg.hidden_size || cfg.num_layers !== baseCfg.num_layers) {
-            issues.push(`Architecture mismatch detected between models`);
-            break;
-         }
+        for (let i = 1; i < configs.length; i++) {
+          const cmpCfg = configs[i].data;
+          const cmpId = configs[i].id;
+
+          if (baseCfg.hidden_size !== cmpCfg.hidden_size) {
+            issues.push(`${cmpId} hidden size (${cmpCfg.hidden_size}) mismatches base (${baseCfg.hidden_size})`);
+          }
+          if (baseCfg.num_layers !== cmpCfg.num_layers) {
+            issues.push(`${cmpId} layers (${cmpCfg.num_layers}) mismatches base (${baseCfg.num_layers})`);
+          }
         }
 
         if (issues.length > 0) {
@@ -232,11 +249,7 @@ export default function MergeBuilder() {
                 models={models}
             />
             <div className="flex-1 min-h-[400px]">
-                <CompactOutputPanel
-                    yamlPreview={yamlPreview}
-                    copied={copied}
-                    setCopied={setCopied}
-                />
+                <CompactOutputPanel yamlPreview={yamlPreview} />
             </div>
         </div>
       </div>
