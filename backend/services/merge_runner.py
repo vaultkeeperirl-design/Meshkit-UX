@@ -33,8 +33,11 @@ class MergeRunner:
             mergekit_config["parameters"] = config_data["parameters"]
 
         # Write to yaml file
-        with open(output_path, "w") as f:
-            yaml.dump(mergekit_config, f, default_flow_style=False, sort_keys=False)
+        def write_yaml():
+            with open(output_path, "w") as f:
+                yaml.dump(mergekit_config, f, default_flow_style=False, sort_keys=False)
+
+        await asyncio.to_thread(write_yaml)
 
         return output_path
 
