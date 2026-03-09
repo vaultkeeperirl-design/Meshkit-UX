@@ -19,3 +19,14 @@ app.include_router(endpoints.router, prefix="/api")
 @app.get("/")
 def read_root():
     return {"message": "Mergekit Studio Backend is running!"}
+
+if __name__ == "__main__":
+    import uvicorn
+    import sys
+    import multiprocessing
+
+    # Required for PyInstaller multiprocessing support
+    multiprocessing.freeze_support()
+
+    # Run the server
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
