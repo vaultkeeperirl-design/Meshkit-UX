@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Plus, Trash, Activity, AlertTriangle } from "lucide-react";
 import DynamicVisualizer from "../components/DynamicVisualizer";
@@ -12,6 +12,9 @@ export default function MergeBuilder() {
   const [globalParams, setGlobalParams] = useState("");
   const [yamlPreview, setYamlPreview] = useState("");
   const [compatibilityIssue, setCompatibilityIssue] = useState(null);
+
+  // Cache to store already fetched model configurations
+  const configCache = useRef({});
 
   const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
 
@@ -32,8 +35,16 @@ export default function MergeBuilder() {
       try {
         const configs = [];
         for (const mId of modelList) {
+          // Check if we already have this config cached to avoid redundant API calls
+          if (configCache.current[mId]) {
+            configs.push({ id: mId, data: configCache.current[mId] });
+            continue;
+          }
+
           try {
             const res = await axios.post("http://localhost:8000/api/hf/config", { model_id: mId });
+            // Save the result to our cache for future checks
+            configCache.current[mId] = res.data;
             configs.push({ id: mId, data: res.data });
           } catch (err) {
             // Ignore API fetch errors for individual models (might just be a typo while typing)

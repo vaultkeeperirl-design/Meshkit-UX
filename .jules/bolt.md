@@ -1,0 +1,3 @@
+## 2024-05-24 - [Avoid Redundant API calls in React components]
+**Learning:** Found a performance bottleneck in `MergeBuilder.jsx` where redundant `axios.post` API calls were being made to `hf/config` on each re-evaluation, fetching data for models that had already been loaded.
+**Action:** Implemented a client-side cache using `useRef` to store previously fetched configurations. This significantly reduces network overhead and backend load, ensuring only new models are fetched when the component updates.
