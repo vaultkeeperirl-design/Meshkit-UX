@@ -47,8 +47,9 @@ export default function Quantizer() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium leading-6 text-white">Input Model Path</label>
+            <label htmlFor="inputModelPath" className="block text-sm font-medium leading-6 text-white">Input Model Path</label>
             <input
+              id="inputModelPath"
               type="text"
               value={modelPath}
               onChange={(e) => setModelPath(e.target.value)}
@@ -56,8 +57,9 @@ export default function Quantizer() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium leading-6 text-white">Output Path (Optional)</label>
+            <label htmlFor="f16OutputPath" className="block text-sm font-medium leading-6 text-white">Output Path (Optional)</label>
             <input
+              id="f16OutputPath"
               type="text"
               value={f16Path}
               onChange={(e) => setF16Path(e.target.value)}
@@ -85,8 +87,9 @@ export default function Quantizer() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium leading-6 text-white">Input F16 GGUF Path</label>
+            <label htmlFor="inputF16Path" className="block text-sm font-medium leading-6 text-white">Input F16 GGUF Path</label>
             <input
+              id="inputF16Path"
               type="text"
               value={f16Path}
               onChange={(e) => setF16Path(e.target.value)}
@@ -94,8 +97,9 @@ export default function Quantizer() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium leading-6 text-white">Quantization Type</label>
+            <label htmlFor="quantType" className="block text-sm font-medium leading-6 text-white">Quantization Type</label>
             <select
+                id="quantType"
                 value={qType}
                 onChange={(e) => setQType(e.target.value)}
                 className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
@@ -107,8 +111,9 @@ export default function Quantizer() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium leading-6 text-white">Final Output Path</label>
+            <label htmlFor="quantOutputPath" className="block text-sm font-medium leading-6 text-white">Final Output Path</label>
             <input
+              id="quantOutputPath"
               type="text"
               value={quantPath}
               onChange={(e) => setQuantPath(e.target.value)}

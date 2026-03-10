@@ -33,11 +33,12 @@ export default function Settings() {
 
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
         <div>
-          <label className="block text-sm font-medium leading-6 text-white">
+          <label htmlFor="hfToken" className="block text-sm font-medium leading-6 text-white">
             HuggingFace Token (HF_TOKEN)
           </label>
           <div className="mt-2">
             <input
+              id="hfToken"
               type="password"
               value={hfToken}
               onChange={(e) => setHfToken(e.target.value)}
