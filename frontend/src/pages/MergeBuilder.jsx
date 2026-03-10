@@ -163,8 +163,9 @@ export default function MergeBuilder() {
 
           <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
             <div>
-              <label className="block text-sm font-medium leading-6 text-white">Merge Method</label>
+              <label htmlFor="mergeMethod" className="block text-sm font-medium leading-6 text-white">Merge Method</label>
               <select
+                id="mergeMethod"
                 value={method}
                 onChange={(e) => setMethod(e.target.value)}
                 className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 pl-3 pr-10 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
@@ -175,8 +176,9 @@ export default function MergeBuilder() {
 
             {["ties", "dare_ties", "dare_linear", "passthrough"].includes(method) && (
               <div>
-                <label className="block text-sm font-medium leading-6 text-white">Base Model (Optional/Required for Method)</label>
+                <label htmlFor="baseModel" className="block text-sm font-medium leading-6 text-white">Base Model (Optional/Required for Method)</label>
                 <input
+                  id="baseModel"
                   type="text"
                   value={baseModel}
                   onChange={(e) => setBaseModel(e.target.value)}
@@ -187,8 +189,9 @@ export default function MergeBuilder() {
             )}
 
             <div>
-               <label className="block text-sm font-medium leading-6 text-white mb-2">Global Parameters</label>
+               <label htmlFor="globalParams" className="block text-sm font-medium leading-6 text-white mb-2">Global Parameters</label>
                <textarea
+                  id="globalParams"
                   value={globalParams}
                   onChange={(e) => setGlobalParams(e.target.value)}
                   placeholder="t: 0.5&#10;density: 0.5"
@@ -221,8 +224,9 @@ export default function MergeBuilder() {
                 </button>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium leading-6 text-white">Model ID / Path</label>
+                    <label htmlFor={`modelId-${idx}`} className="block text-sm font-medium leading-6 text-white">Model ID / Path</label>
                     <input
+                      id={`modelId-${idx}`}
                       type="text"
                       value={m.model_id}
                       onChange={(e) => handleModelChange(idx, "model_id", e.target.value)}
@@ -231,8 +235,9 @@ export default function MergeBuilder() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium leading-6 text-white">Model Parameters (Optional)</label>
+                    <label htmlFor={`modelParams-${idx}`} className="block text-sm font-medium leading-6 text-white">Model Parameters (Optional)</label>
                     <textarea
+                      id={`modelParams-${idx}`}
                       value={m.parameters}
                       onChange={(e) => handleModelChange(idx, "parameters", e.target.value)}
                       placeholder="weight: 1.0"
