@@ -13,7 +13,7 @@ export default function CompactOutputPanel({ yamlPreview, copied, setCopied }) {
                 <button
                     onClick={() => setActiveTab("yaml")}
                     className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
-                        activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 hover:text-slate-300"
+                        activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 border-b-2 border-transparent hover:text-slate-300"
                     }`}
                 >
                     YAML Output
@@ -21,7 +21,7 @@ export default function CompactOutputPanel({ yamlPreview, copied, setCopied }) {
                 <button
                     onClick={() => setActiveTab("logs")}
                     className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
-                        activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 hover:text-slate-300"
+                        activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 border-b-2 border-transparent hover:text-slate-300"
                     }`}
                 >
                     Process & Logs
