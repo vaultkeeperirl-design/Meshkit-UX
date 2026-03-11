@@ -4,14 +4,16 @@ on:
   push:
     branches:
       - main
-
-permissions:
-  contents: write
+  pull_request:
+    branches:
+      - main
 
 jobs:
   release:
     name: Build & Release App
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
@@ -34,6 +36,19 @@ jobs:
         cache: 'pip'
         cache-dependency-path: backend/requirements.txt
 
+    - name: Clone Required Repositories (tools)
+      working-directory: backend
+      shell: bash
+      run: |
+        mkdir -p tools
+        cd tools
+        if [ ! -d "mergekit" ]; then
+            git clone https://github.com/arcee-ai/mergekit.git
+        fi
+        if [ ! -d "llama.cpp" ]; then
+            git clone https://github.com/ggerganov/llama.cpp.git
+        fi
+
     - name: Cache llama.cpp build
       uses: actions/cache@v4
       with:
@@ -54,19 +69,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pyinstaller
-
-    - name: Clone Required Repositories (tools)
-      working-directory: backend
-      shell: bash
-      run: |
-        mkdir -p tools
-        cd tools
-        if [ ! -d "mergekit" ]; then
-            git clone https://github.com/arcee-ai/mergekit.git
-        fi
-        if [ ! -d "llama.cpp" ]; then
-            git clone https://github.com/ggerganov/llama.cpp.git
-        fi
 
     - name: Install local mergekit and compile llama.cpp
       working-directory: backend
@@ -120,6 +122,9 @@ jobs:
     name: Publish Release
     needs: [release]
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
 
     steps:
     - name: Download Artifacts
