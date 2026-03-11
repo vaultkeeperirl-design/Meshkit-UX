@@ -1,3 +1,7 @@
 ## 2024-05-24 - [Avoid Redundant API calls in React components]
 **Learning:** Found a performance bottleneck in `MergeBuilder.jsx` where redundant `axios.post` API calls were being made to `hf/config` on each re-evaluation, fetching data for models that had already been loaded.
 **Action:** Implemented a client-side cache using `useRef` to store previously fetched configurations. This significantly reduces network overhead and backend load, ensuring only new models are fetched when the component updates.
+
+## 2024-05-25 - [O(n²) Array Copying in Streaming Logs]
+**Learning:** React state updates using the spread operator `setLogs(prev => [...prev, newLog])` inside a rapid websocket stream create an O(N²) memory allocation and garbage collection nightmare. Furthermore, mapping thousands of array items into individual `<div>` DOM nodes freezes the main thread.
+**Action:** Convert the state to a single string (`""`) and use string concatenation `setLogs(prev => prev + newLog + '\n')`. Render the single text node within a `whitespace-pre-wrap` container to offload rendering layout to the browser efficiently.
