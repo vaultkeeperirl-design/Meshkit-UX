@@ -2,7 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { Terminal, Play, StopCircle } from "lucide-react";
 
 export default function ProcessLogs({ isCompact }) {
-  const [logs, setLogs] = useState([]);
+  // Performance optimization: Store logs as a single string instead of an array.
+  // This prevents O(N^2) memory reallocation during rapid websocket streams and
+  // avoids rendering thousands of individual <div> DOM nodes which freezes the main thread.
+  const [logs, setLogs] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
   const logEndRef = useRef(null);
@@ -18,27 +21,27 @@ export default function ProcessLogs({ isCompact }) {
     if (wsRef.current) {
         wsRef.current.close();
     }
-    setLogs([`Connecting to backend for action: ${cmdObject.action}...`]);
+    setLogs(`Connecting to backend for action: ${cmdObject.action}...\n`);
 
     const ws = new WebSocket("ws://localhost:8000/api/ws/logs");
 
     ws.onopen = () => {
       setIsConnected(true);
-      setLogs(prev => [...prev, "Connected. Starting process..."]);
+      setLogs(prev => prev + "Connected. Starting process...\n");
       ws.send(JSON.stringify(cmdObject));
     };
 
     ws.onmessage = (event) => {
-      setLogs(prev => [...prev, event.data]);
+      setLogs(prev => prev + event.data + "\n");
     };
 
     ws.onerror = (error) => {
-      setLogs(prev => [...prev, `[WebSocket Error] ${error.message || "Unknown error"}`]);
+      setLogs(prev => prev + `[WebSocket Error] ${error.message || "Unknown error"}\n`);
     };
 
     ws.onclose = () => {
       setIsConnected(false);
-      setLogs(prev => [...prev, "[Process Completed / Disconnected]"]);
+      setLogs(prev => prev + "[Process Completed / Disconnected]\n");
     };
 
     wsRef.current = ws;
@@ -112,9 +115,7 @@ export default function ProcessLogs({ isCompact }) {
           {logs.length === 0 ? (
              <span className="text-slate-600">No active process. Ready...</span>
           ) : (
-             logs.map((log, idx) => (
-                <div key={idx}>{log}</div>
-             ))
+             logs
           )}
           <div ref={logEndRef} />
         </div>
