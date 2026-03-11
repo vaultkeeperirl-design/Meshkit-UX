@@ -2,6 +2,12 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
+  "description": "Meshkit UX",
+  "author": "Vaultkeeper",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vaultkeeperirl-design/Meshkit-UX.git"
+  },
   "type": "module",
   "main": "electron/main.js",
   "scripts": {
@@ -32,8 +38,7 @@
       }
     ],
     "win": {
-      "target": "nsis",
-      "icon": "public/vite.svg"
+      "target": "nsis"
     },
     "nsis": {
       "oneClick": false,
@@ -43,8 +48,7 @@
       "target": [
         "AppImage",
         "tar.gz"
-      ],
-      "icon": "public/vite.svg"
+      ]
     }
   },
   "dependencies": {

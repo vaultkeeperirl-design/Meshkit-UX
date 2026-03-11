@@ -76,11 +76,6 @@ jobs:
       working-directory: backend
       shell: bash
       run: |
-        # Install mergekit locally
-        cd tools/mergekit
-        pip install -e .
-        cd ../..
-
         # Build llama.cpp
         cd tools/llama.cpp
         # Use cmake to build llama.cpp
@@ -93,6 +88,12 @@ jobs:
             cp build/bin/llama-* .
         fi
         pip install -r requirements.txt
+        cd ../..
+
+        # Install mergekit locally
+        cd tools/mergekit
+        pip install -e .
+        cd ../..
 
     - name: Build PyInstaller Backend
       working-directory: backend
