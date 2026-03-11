@@ -1,30 +1,32 @@
 import { useState } from "react";
 import { Box, Settings2, Play } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 export default function Quantizer() {
   const [modelPath, setModelPath] = useState("./merged_model");
   const [f16Path, setF16Path] = useState("./merged_model_f16.gguf");
   const [quantPath, setQuantPath] = useState("./merged_model_q4_k_m.gguf");
   const [qType, setQType] = useState("q4_k_m");
-  const navigate = useNavigate();
+
+  const startProcessAndViewLogs = (cmd) => {
+    localStorage.setItem("runCommand", JSON.stringify(cmd));
+    if (window.__closeModals) window.__closeModals();
+    if (window.__openLogsTab) window.__openLogsTab();
+  };
 
   const handleRunF16 = () => {
-    localStorage.setItem("runCommand", JSON.stringify({
+    startProcessAndViewLogs({
       action: "convert_f16",
       model_path: modelPath
-    }));
-    navigate("/logs");
+    });
   };
 
   const handleRunQuant = () => {
-    localStorage.setItem("runCommand", JSON.stringify({
+    startProcessAndViewLogs({
       action: "quantize",
       input_model: f16Path,
       output_model: quantPath,
       qtype: qType
-    }));
-    navigate("/logs");
+    });
   };
 
   return (
