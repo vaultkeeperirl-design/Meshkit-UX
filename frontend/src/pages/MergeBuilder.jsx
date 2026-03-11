@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Plus, Trash, Activity, AlertTriangle } from "lucide-react";
+import { Plus, Trash, Activity, AlertTriangle, Play } from "lucide-react";
 import DynamicVisualizer from "../components/DynamicVisualizer";
 import CompactOutputPanel from "../components/CompactOutputPanel";
 
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState("yaml");
   const [baseModel, setBaseModel] = useState("");
   const [models, setModels] = useState([{ model_id: "", parameters: "" }]);
   const [globalParams, setGlobalParams] = useState("");
@@ -120,6 +121,12 @@ export default function MergeBuilder() {
     }
   };
 
+  // Expose a globally accessible method to switch tabs, bypassing React router
+  useEffect(() => {
+    window.__openLogsTab = () => setActiveTab("logs");
+    return () => { delete window.__openLogsTab; };
+  }, []);
+
   const generateYaml = async () => {
     const payload = {
       merge_method: method,
@@ -134,8 +141,25 @@ export default function MergeBuilder() {
     try {
       const res = await axios.post("http://localhost:8000/api/merge/generate-config", payload);
       setYamlPreview(res.data.yaml_content);
+      return res.data;
     } catch (err) {
       setYamlPreview("Error generating YAML: " + err.message);
+      throw err;
+    }
+  };
+
+  const handleRunMerge = async () => {
+    try {
+      await generateYaml();
+      localStorage.setItem("runCommand", JSON.stringify({
+        action: "merge",
+        yaml_path: "merge_config.yml",
+        output_path: "./merged_model"
+      }));
+      setActiveTab("logs");
+    } catch (err) {
+      // Error handled in generateYaml
+      console.error(err);
     }
   };
 
@@ -249,12 +273,20 @@ export default function MergeBuilder() {
             ))}
           </div>
 
-          <button
-            onClick={generateYaml}
-            className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
-          >
-            <Activity size={18} className="mr-2" /> Generate YAML Configuration
-          </button>
+          <div className="flex gap-4">
+            <button
+                onClick={generateYaml}
+                className="flex flex-1 justify-center rounded-md bg-slate-700 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors"
+            >
+                Preview YAML
+            </button>
+            <button
+                onClick={handleRunMerge}
+                className="flex flex-1 justify-center rounded-md bg-blue-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+            >
+                <Play size={18} className="mr-2" /> Generate & Run Merge
+            </button>
+          </div>
         </div>
       </div>
 
@@ -270,6 +302,8 @@ export default function MergeBuilder() {
                     yamlPreview={yamlPreview}
                     copied={copied}
                     setCopied={setCopied}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
                 />
             </div>
         </div>

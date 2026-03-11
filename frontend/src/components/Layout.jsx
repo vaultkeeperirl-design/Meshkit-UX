@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Settings, GitMerge, Box, X } from "lucide-react";
 import MergeBuilder from "../pages/MergeBuilder";
 import Quantizer from "../pages/Quantizer";
@@ -6,6 +6,13 @@ import SettingsPage from "../pages/Settings";
 
 export default function Layout() {
   const [openView, setOpenView] = useState(null);
+
+  // Expose a globally accessible function to close modals from anywhere
+  // without relying on broken route interception.
+  useEffect(() => {
+    window.__closeModals = () => setOpenView(null);
+    return () => { delete window.__closeModals; };
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-slate-900 text-slate-100 font-sans overflow-hidden">
