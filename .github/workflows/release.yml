@@ -42,10 +42,12 @@ jobs:
       run: |
         mkdir -p tools
         cd tools
-        if [ ! -d "mergekit" ]; then
+        if [ ! -d "mergekit" ] || [ -z "$(ls -A mergekit 2>/dev/null)" ]; then
+            rm -rf mergekit
             git clone https://github.com/arcee-ai/mergekit.git
         fi
-        if [ ! -d "llama.cpp" ]; then
+        if [ ! -d "llama.cpp" ] || [ -z "$(ls -A llama.cpp 2>/dev/null)" ]; then
+            rm -rf llama.cpp
             git clone https://github.com/ggerganov/llama.cpp.git
         fi
 
