@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Plus, Trash, Activity, AlertTriangle, Play } from "lucide-react";
+import { Plus, Trash, Activity, AlertTriangle, Play, Eye } from "lucide-react";
 import DynamicVisualizer from "../components/DynamicVisualizer";
 import CompactOutputPanel from "../components/CompactOutputPanel";
 
@@ -276,13 +276,13 @@ export default function MergeBuilder() {
           <div className="flex gap-4">
             <button
                 onClick={generateYaml}
-                className="flex flex-1 justify-center rounded-md bg-slate-700 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors"
+                className="flex flex-1 items-center justify-center rounded-md bg-slate-700 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors"
             >
-                Preview YAML
+                <Eye size={18} className="mr-2" /> Preview YAML
             </button>
             <button
                 onClick={handleRunMerge}
-                className="flex flex-1 justify-center rounded-md bg-blue-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+                className="flex flex-1 items-center justify-center rounded-md bg-blue-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
             >
                 <Play size={18} className="mr-2" /> Generate & Run Merge
             </button>
