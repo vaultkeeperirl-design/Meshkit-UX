@@ -57,12 +57,23 @@ class MergeRunner:
                 if not line:
                     break
                 await websocket.send_text(line.decode().rstrip())
-        except Exception as e:
-            await websocket.send_text(f"Error streaming output: {str(e)}")
-        finally:
             await process.wait()
-            await websocket.send_text(f"{task_name} finished with return code: {process.returncode}")
-            self.active_process = None
+            try:
+                await websocket.send_text(f"{task_name} finished with return code: {process.returncode}")
+            except Exception:
+                pass
+        except Exception as e:
+            try:
+                await websocket.send_text(f"Error streaming output: {str(e)}")
+            except Exception:
+                pass
+            raise
+        finally:
+            # We must not clear self.active_process here in finally if the process is still running
+            # (e.g., when an exception like disconnect occurs) so cancel_process can kill it later.
+            # But if we wait()ed successfully, it means the process ended naturally.
+            if getattr(process, "returncode", None) is not None:
+                self.active_process = None
 
     async def cancel_process(self):
         if self.active_process:

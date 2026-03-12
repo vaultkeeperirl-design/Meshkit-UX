@@ -98,7 +98,13 @@ async def websocket_logs(websocket: WebSocket):
              await local_runner.run_command_with_websocket(cmd, websocket, task_name="Quantization")
 
     except Exception as e:
-        await websocket.send_text(f"WebSocket Error: {str(e)}")
+        try:
+            await websocket.send_text(f"WebSocket Error: {str(e)}")
+        except Exception:
+            pass
     finally:
         await local_runner.cancel_process()
-        await websocket.close()
+        try:
+            await websocket.close()
+        except Exception:
+            pass
