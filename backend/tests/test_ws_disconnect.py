@@ -31,6 +31,9 @@ def test_websocket_close_kills_process(mock_exec):
         msg = websocket.receive_text()
         assert msg == "Starting merge: mergekit-yaml dummy.yml dummy_out --copy-tokenizer"
 
+        # Set returncode to None to simulate the process is still running
+        mock_process.returncode = None
+
         # Then close websocket, this should trigger Exception in the endpoint
         websocket.close()
 
