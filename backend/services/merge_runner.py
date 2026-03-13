@@ -56,12 +56,18 @@ class MergeRunner:
                 line = await process.stdout.readline()
                 if not line:
                     break
-                await websocket.send_text(line.decode().rstrip())
+                try:
+                    await websocket.send_text(line.decode().rstrip())
+                except Exception:
+                    # Client disconnected or error sending
+                    await self.cancel_process()
+                    break
             await process.wait()
-            try:
-                await websocket.send_text(f"{task_name} finished with return code: {process.returncode}")
-            except Exception:
-                pass
+            if getattr(process, "returncode", None) is not None:
+                try:
+                    await websocket.send_text(f"{task_name} finished with return code: {process.returncode}")
+                except Exception:
+                    pass
         except Exception as e:
             try:
                 await websocket.send_text(f"Error streaming output: {str(e)}")
