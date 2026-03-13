@@ -25,7 +25,7 @@ export default function Layout() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setOpenView("quantizer")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 ${
               openView === "quantizer"
                 ? "bg-blue-600 text-white"
                 : "text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -36,7 +36,7 @@ export default function Layout() {
           </button>
           <button
             onClick={() => setOpenView("settings")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 ${
               openView === "settings"
                 ? "bg-blue-600 text-white"
                 : "text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -59,10 +59,16 @@ export default function Layout() {
       {/* Centered Modals: Quantizer & Settings */}
       {["quantizer", "settings"].includes(openView) && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center p-8">
-          <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden relative">
+          <div
+            className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden relative"
+            role="dialog"
+            aria-modal="true"
+            aria-label={openView === "quantizer" ? "Quantizer" : "Settings"}
+          >
             <button
               onClick={() => setOpenView(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white z-50 bg-slate-800/80 rounded-full p-1"
+              aria-label="Close modal"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white z-50 bg-slate-800/80 rounded-full p-1 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <X size={24} />
             </button>
