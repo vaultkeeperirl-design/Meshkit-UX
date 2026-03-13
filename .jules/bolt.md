@@ -5,3 +5,6 @@
 ## 2024-05-25 - [O(n²) Array Copying in Streaming Logs]
 **Learning:** React state updates using the spread operator `setLogs(prev => [...prev, newLog])` inside a rapid websocket stream create an O(N²) memory allocation and garbage collection nightmare. Furthermore, mapping thousands of array items into individual `<div>` DOM nodes freezes the main thread.
 **Action:** Convert the state to a single string (`""`) and use string concatenation `setLogs(prev => prev + newLog + '\n')`. Render the single text node within a `whitespace-pre-wrap` container to offload rendering layout to the browser efficiently.
+## 2024-05-26 - [Avoid Re-renders of Heavy UI Panels on Form Keystrokes]
+**Learning:** Found a performance bottleneck where rapid typing in the main form (e.g., `MergeBuilder`) caused complex child components like `DynamicVisualizer`, `CompactOutputPanel`, and `ProcessLogs` to re-render entirely. This caused laggy text input and UI unresponsiveness.
+**Action:** Wrapped heavy child components in `React.memo()` to isolate them from their parent's state updates, specifically avoiding re-renders unless their explicit props change.

@@ -1,7 +1,8 @@
+import { memo } from "react";
 import ProcessLogs from "../pages/ProcessLogs";
 import { Copy, Check } from "lucide-react";
 
-export default function CompactOutputPanel({ yamlPreview, copied, setCopied, activeTab, setActiveTab }) {
+const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copied, setCopied, activeTab, setActiveTab }) {
   return (
     <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col min-h-[400px]">
         {/* Header Tabs */}
@@ -61,4 +62,6 @@ export default function CompactOutputPanel({ yamlPreview, copied, setCopied, act
         </div>
     </div>
   );
-}
+});
+
+export default CompactOutputPanel;
