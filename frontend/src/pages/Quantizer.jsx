@@ -1,23 +1,30 @@
 import { useState } from "react";
-import { Box, Settings2, Play } from "lucide-react";
+import { Box, Settings2, Play, Loader2 } from "lucide-react";
 
 export default function Quantizer() {
   const [modelPath, setModelPath] = useState("./merged_model");
   const [f16Path, setF16Path] = useState("./merged_model_f16.gguf");
   const [quantPath, setQuantPath] = useState("./merged_model_q4_k_m.gguf");
   const [qType, setQType] = useState("q4_k_m");
+  const [isStartingF16, setIsStartingF16] = useState(false);
+  const [isStartingQuant, setIsStartingQuant] = useState(false);
 
-  const startProcessAndViewLogs = (cmd) => {
-    localStorage.setItem("runCommand", JSON.stringify(cmd));
-    if (window.__closeModals) window.__closeModals();
-    if (window.__openLogsTab) window.__openLogsTab();
+  const startProcessAndViewLogs = (cmd, setStartingState) => {
+    setStartingState(true);
+    // Add a tiny delay so the user sees the "Starting..." state before the UI switches
+    setTimeout(() => {
+      localStorage.setItem("runCommand", JSON.stringify(cmd));
+      if (window.__closeModals) window.__closeModals();
+      if (window.__openLogsTab) window.__openLogsTab();
+      setStartingState(false);
+    }, 300);
   };
 
   const handleRunF16 = () => {
     startProcessAndViewLogs({
       action: "convert_f16",
       model_path: modelPath
-    });
+    }, setIsStartingF16);
   };
 
   const handleRunQuant = () => {
@@ -26,7 +33,7 @@ export default function Quantizer() {
       input_model: f16Path,
       output_model: quantPath,
       qtype: qType
-    });
+    }, setIsStartingQuant);
   };
 
   return (
@@ -72,9 +79,11 @@ export default function Quantizer() {
 
         <button
           onClick={handleRunF16}
-          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors"
+          disabled={isStartingF16}
+          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Play size={16} /> Run F16 Conversion
+          {isStartingF16 ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
+          {isStartingF16 ? "Starting..." : "Run F16 Conversion"}
         </button>
       </div>
 
@@ -126,9 +135,11 @@ export default function Quantizer() {
 
         <button
           onClick={handleRunQuant}
-          className="flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 transition-colors"
+          disabled={isStartingQuant}
+          className="flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Play size={16} /> Run Quantization
+          {isStartingQuant ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
+          {isStartingQuant ? "Starting..." : "Run Quantization"}
         </button>
       </div>
     </div>
