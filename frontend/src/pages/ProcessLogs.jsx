@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { Terminal, Play, StopCircle } from "lucide-react";
 
-export default function ProcessLogs({ isCompact }) {
+const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   // Performance optimization: Store logs as a single string instead of an array.
   // This prevents O(N^2) memory reallocation during rapid websocket streams and
   // avoids rendering thousands of individual <div> DOM nodes which freezes the main thread.
@@ -122,4 +122,6 @@ export default function ProcessLogs({ isCompact }) {
       </div>
     </div>
   );
-}
+});
+
+export default ProcessLogs;

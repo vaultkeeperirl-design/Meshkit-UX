@@ -1,4 +1,6 @@
-export default function DynamicVisualizer({ method, baseModel, models }) {
+import { memo } from "react";
+
+const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, models }) {
   // Check how many non-empty models we have
   const validModelsCount = models.filter(m => m.model_id.trim() !== "").length;
   const hasBaseModel = baseModel.trim() !== "";
@@ -69,4 +71,6 @@ export default function DynamicVisualizer({ method, baseModel, models }) {
         </div>
     </div>
   );
-}
+});
+
+export default DynamicVisualizer;
