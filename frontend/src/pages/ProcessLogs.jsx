@@ -48,19 +48,25 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   };
 
   useEffect(() => {
-    const cmdStr = localStorage.getItem("runCommand");
-    if (cmdStr) {
-      try {
-        const cmd = JSON.parse(cmdStr);
-        // Delay slightly to prevent setState during render cycle
-        setTimeout(() => {
-          startProcess(cmd);
-          localStorage.removeItem("runCommand");
-        }, 100);
-      } catch {
-        console.error("Invalid command found in localStorage");
+    const checkCommand = () => {
+      const cmdStr = localStorage.getItem("runCommand");
+      if (cmdStr) {
+        try {
+          const cmd = JSON.parse(cmdStr);
+          // Delay slightly to prevent setState during render cycle
+          setTimeout(() => {
+            startProcess(cmd);
+            localStorage.removeItem("runCommand");
+          }, 100);
+        } catch {
+          console.error("Invalid command found in localStorage");
+        }
       }
-    }
+    };
+
+    checkCommand();
+    window.addEventListener("runCommandTriggered", checkCommand);
+    return () => window.removeEventListener("runCommandTriggered", checkCommand);
   }, []);
   const handleStartMerge = () => {
      startProcess({

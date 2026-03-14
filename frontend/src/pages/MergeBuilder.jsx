@@ -170,6 +170,7 @@ export default function MergeBuilder() {
         yaml_path: "merge_config.yml",
         output_path: "./merged_model"
       }));
+      window.dispatchEvent(new Event("runCommandTriggered"));
       setActiveTab("logs");
     } catch (err) {
       // Error handled in generateYaml
