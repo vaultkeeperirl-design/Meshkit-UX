@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Save } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
 
 export default function Settings() {
   const [hfToken, setHfToken] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({ text: "", type: "" });
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     axios.get("http://localhost:8000/api/settings").then((res) => {
@@ -13,12 +14,16 @@ export default function Settings() {
   }, []);
 
   const saveSettings = async () => {
+    setIsSaving(true);
+    setMessage({ text: "", type: "" });
     try {
       await axios.post("http://localhost:8000/api/settings", { hf_token: hfToken });
-      setMessage("Settings saved successfully!");
-      setTimeout(() => setMessage(""), 3000);
+      setMessage({ text: "Settings saved successfully!", type: "success" });
+      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
     } catch {
-      setMessage("Error saving settings");
+      setMessage({ text: "Failed to save settings. Please check your connection and try again.", type: "error" });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -51,14 +56,20 @@ export default function Settings() {
           </p>
         </div>
 
-        <div className="pt-4">
+        <div className="pt-4 flex items-center gap-4">
           <button
             onClick={saveSettings}
-            className="flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+            disabled={isSaving}
+            className="flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Save size={16} /> Save Settings
+            {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            {isSaving ? "Saving..." : "Save Settings"}
           </button>
-          {message && <p className="mt-3 text-sm text-green-400">{message}</p>}
+          {message.text && (
+            <p className={`text-sm ${message.type === "error" ? "text-red-400" : "text-green-400"}`}>
+              {message.text}
+            </p>
+          )}
         </div>
       </div>
     </div>
