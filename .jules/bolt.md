@@ -8,3 +8,7 @@
 ## 2024-05-26 - [Avoid Re-renders of Heavy UI Panels on Form Keystrokes]
 **Learning:** Found a performance bottleneck where rapid typing in the main form (e.g., `MergeBuilder`) caused complex child components like `DynamicVisualizer`, `CompactOutputPanel`, and `ProcessLogs` to re-render entirely. This caused laggy text input and UI unresponsiveness.
 **Action:** Wrapped heavy child components in `React.memo()` to isolate them from their parent's state updates, specifically avoiding re-renders unless their explicit props change.
+
+## 2024-06-05 - [Avoid Sequential Network Requests in React Effects]
+**Learning:** Found a performance bottleneck in `MergeBuilder.jsx` where `axios.post` API calls inside the `checkCompatibility` effect were being executed sequentially inside a `for...of` loop. This caused network latency to scale linearly with the number of uncached models (O(N) latency hops) blocking UI feedback.
+**Action:** Replaced the sequential await loop with a `Promise.all` approach to fetch all missing HuggingFace model configurations concurrently, reducing network latency back to O(1).
