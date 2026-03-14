@@ -62,7 +62,7 @@ export default function Quantizer() {
               type="text"
               value={modelPath}
               onChange={(e) => setModelPath(e.target.value)}
-              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             />
           </div>
           <div>
@@ -72,7 +72,7 @@ export default function Quantizer() {
               type="text"
               value={f16Path}
               onChange={(e) => setF16Path(e.target.value)}
-              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             />
           </div>
         </div>
@@ -104,7 +104,7 @@ export default function Quantizer() {
               type="text"
               value={f16Path}
               onChange={(e) => setF16Path(e.target.value)}
-              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             />
           </div>
           <div>
@@ -113,7 +113,7 @@ export default function Quantizer() {
                 id="quantType"
                 value={qType}
                 onChange={(e) => setQType(e.target.value)}
-                className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+                className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             >
                 <option value="q4_k_m">Q4_K_M (Recommended)</option>
                 <option value="q5_k_m">Q5_K_M</option>
@@ -128,7 +128,7 @@ export default function Quantizer() {
               type="text"
               value={quantPath}
               onChange={(e) => setQuantPath(e.target.value)}
-              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             />
           </div>
         </div>

@@ -42,7 +42,7 @@ export default function Settings() {
               type="password"
               value={hfToken}
               onChange={(e) => setHfToken(e.target.value)}
-              className="block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-700 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+              className="block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
               placeholder="hf_xxxxxxxxxxxxxxxxxxxxxx"
             />
           </div>
