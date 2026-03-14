@@ -35,23 +35,33 @@ export default function MergeBuilder() {
       }
 
       try {
-        const configs = [];
-        for (const mId of modelList) {
-          // Check if we already have this config cached to avoid redundant API calls
+        // Performance optimization: Use Promise.all to fetch all missing configurations concurrently
+        // instead of sequentially in a loop. This reduces latency from O(N) to O(1) network hops.
+        const fetchPromises = modelList.map(async (mId) => {
           if (configCache.current[mId]) {
-            configs.push({ id: mId, data: configCache.current[mId] });
-            continue;
+            return { id: mId, data: configCache.current[mId], cached: true };
           }
 
           try {
             const res = await axios.post("http://localhost:8000/api/hf/config", { model_id: mId });
-            // Save the result to our cache for future checks
-            configCache.current[mId] = res.data;
-            configs.push({ id: mId, data: res.data });
+            return { id: mId, data: res.data, cached: false };
           } catch (err) {
-            // Ignore API fetch errors for individual models (might just be a typo while typing)
             console.warn(`Failed to fetch config for ${mId}`, err);
+            return null; // Ignore errors for individual models
           }
+        });
+
+        const results = await Promise.all(fetchPromises);
+
+        // Filter out any failed requests and save successful ones to cache
+        const configs = [];
+        for (const result of results) {
+           if (result) {
+               if (!result.cached) {
+                   configCache.current[result.id] = result.data;
+               }
+               configs.push({ id: result.id, data: result.data });
+           }
         }
 
         if (configs.length < 2) {
