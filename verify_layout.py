@@ -7,7 +7,12 @@ async def run():
         page = await browser.new_page(viewport={"width": 1920, "height": 1080})
         await page.goto("http://localhost:5173/builder")
         await page.wait_for_timeout(2000)
-        await page.screenshot(path="/home/jules/verification/layout_fixed.png", full_page=True)
+        await page.locator('#mergeMethod').hover()
+        await page.wait_for_timeout(500)
+        await page.screenshot(path="/home/jules/verification/layout_hover_select.png", full_page=True)
+        await page.locator('#globalParams').hover()
+        await page.wait_for_timeout(500)
+        await page.screenshot(path="/home/jules/verification/layout_hover_textarea.png", full_page=True)
         await browser.close()
 
 asyncio.run(run())
