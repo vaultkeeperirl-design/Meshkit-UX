@@ -12,3 +12,7 @@
 ## 2024-06-05 - [Avoid Sequential Network Requests in React Effects]
 **Learning:** Found a performance bottleneck in `MergeBuilder.jsx` where `axios.post` API calls inside the `checkCompatibility` effect were being executed sequentially inside a `for...of` loop. This caused network latency to scale linearly with the number of uncached models (O(N) latency hops) blocking UI feedback.
 **Action:** Replaced the sequential await loop with a `Promise.all` approach to fetch all missing HuggingFace model configurations concurrently, reducing network latency back to O(1).
+
+## 2024-06-12 - [Global HTTPX AsyncClient for Connection Pooling]
+**Learning:** Instantiating `httpx.AsyncClient()` inside `get_model_config` meant a new TCP/TLS connection was opened for every model configuration request. This overhead completely negated the performance benefits of using `Promise.all` in the frontend when fetching multiple missing configurations concurrently.
+**Action:** Created a single global `_client = httpx.AsyncClient()` in `hf_client.py` and reused it across requests. This utilizes HTTP keep-alive and connection pooling, dropping the latency of subsequent requests to the HuggingFace API to ~0ms setup time.
