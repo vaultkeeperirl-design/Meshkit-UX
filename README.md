@@ -48,5 +48,19 @@ npm run dev
 
 Open your browser to `http://localhost:5173` to start using Mergekit Studio!
 
+**Run the Standalone Desktop App (Electron)**
+```bash
+cd frontend
+npm run electron:dev
+```
+This runs the Vite server and Electron simultaneously.
+
+**Build the Desktop Executable**
+```bash
+cd frontend
+npm run electron:build
+```
+This packages the app into standalone executables using `electron-builder`.
+
 ## License
 MIT License
