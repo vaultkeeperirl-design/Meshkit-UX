@@ -222,7 +222,7 @@ export default function MergeBuilder() {
                   value={baseModel}
                   onChange={(e) => setBaseModel(e.target.value)}
                   placeholder="e.g. meta-llama/Meta-Llama-3-8B"
-                  className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+                  className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
                 />
               </div>
             )}
@@ -234,7 +234,7 @@ export default function MergeBuilder() {
                   value={globalParams}
                   onChange={(e) => setGlobalParams(e.target.value)}
                   placeholder="t: 0.5&#10;density: 0.5"
-                  className="block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6 font-mono h-24"
+                  className="block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6 font-mono h-24"
                />
                <p className="mt-2 text-xs text-slate-500">One per line, e.g. \`key: value\`</p>
             </div>
@@ -270,7 +270,7 @@ export default function MergeBuilder() {
                       value={m.model_id}
                       onChange={(e) => handleModelChange(idx, "model_id", e.target.value)}
                       placeholder="e.g. NousResearch/Hermes-2-Pro-Llama-3-8B"
-                      className="mt-2 block w-full rounded-md border-0 bg-slate-800 py-1.5 text-white ring-1 ring-inset ring-slate-600 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
+                      className="mt-2 block w-full rounded-md border-0 bg-slate-800 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-600 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                   <div>
@@ -280,7 +280,7 @@ export default function MergeBuilder() {
                       value={m.parameters}
                       onChange={(e) => handleModelChange(idx, "parameters", e.target.value)}
                       placeholder="weight: 1.0"
-                      className="mt-2 block w-full rounded-md border-0 bg-slate-800 py-1.5 text-white ring-1 ring-inset ring-slate-600 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6 font-mono h-20"
+                      className="mt-2 block w-full rounded-md border-0 bg-slate-800 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-600 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6 font-mono h-20"
                     />
                   </div>
                 </div>
