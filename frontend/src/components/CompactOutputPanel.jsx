@@ -10,7 +10,7 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
             <div className="flex">
                 <button
                     onClick={() => setActiveTab("yaml")}
-                    className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
+                    className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded-t-md ${
                         activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 border-b-2 border-transparent hover:text-slate-300"
                     }`}
                 >
@@ -18,7 +18,7 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
                 </button>
                 <button
                     onClick={() => setActiveTab("logs")}
-                    className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors ${
+                    className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded-t-md ${
                         activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 border-b-2 border-transparent hover:text-slate-300"
                     }`}
                 >
