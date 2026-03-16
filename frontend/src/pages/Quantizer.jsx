@@ -81,7 +81,7 @@ export default function Quantizer() {
         <button
           onClick={handleRunF16}
           disabled={isStartingF16}
-          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isStartingF16 ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
           {isStartingF16 ? "Starting..." : "Run F16 Conversion"}
@@ -137,7 +137,7 @@ export default function Quantizer() {
         <button
           onClick={handleRunQuant}
           disabled={isStartingQuant}
-          className="flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isStartingQuant ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
           {isStartingQuant ? "Starting..." : "Run Quantization"}
