@@ -8,9 +8,13 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/settings").then((res) => {
-      setHfToken(res.data.hf_token || "");
-    });
+    axios.get("http://localhost:8000/api/settings")
+      .then((res) => {
+        setHfToken(res.data.hf_token || "");
+      })
+      .catch((err) => {
+        console.error("Failed to fetch settings:", err);
+      });
   }, []);
 
   const saveSettings = async () => {
