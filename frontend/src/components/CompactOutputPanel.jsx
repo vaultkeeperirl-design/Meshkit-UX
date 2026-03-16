@@ -2,6 +2,19 @@ import { memo } from "react";
 import ProcessLogs from "../pages/ProcessLogs";
 import { Copy, Check } from "lucide-react";
 
+/**
+ * A memoized panel component that toggles between showing generated YAML configuration and real-time process logs.
+ * Includes functionality to copy the YAML preview to the clipboard.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} props.yamlPreview - The generated YAML configuration string to display.
+ * @param {boolean} props.copied - State indicating if the YAML has been successfully copied.
+ * @param {function(boolean): void} props.setCopied - State setter to handle the copied status toggle.
+ * @param {string} props.activeTab - The currently active tab, either 'yaml' or 'logs'.
+ * @param {function(string): void} props.setActiveTab - State setter to switch the active tab.
+ * @returns {JSX.Element} The rendered output panel with YAML preview and process logs.
+ */
 const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copied, setCopied, activeTab, setActiveTab }) {
   return (
     <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col min-h-[400px]">
