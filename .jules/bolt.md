@@ -16,3 +16,7 @@
 ## 2024-06-12 - [Global HTTPX AsyncClient for Connection Pooling]
 **Learning:** Instantiating `httpx.AsyncClient()` inside `get_model_config` meant a new TCP/TLS connection was opened for every model configuration request. This overhead completely negated the performance benefits of using `Promise.all` in the frontend when fetching multiple missing configurations concurrently.
 **Action:** Created a single global `_client = httpx.AsyncClient()` in `hf_client.py` and reused it across requests. This utilizes HTTP keep-alive and connection pooling, dropping the latency of subsequent requests to the HuggingFace API to ~0ms setup time.
+
+## 2024-06-19 - [Avoid Synchronous File I/O in FastAPI Async Endpoints]
+**Learning:** Found a performance bottleneck in `backend/api/endpoints.py` where synchronous disk I/O operations (`json.load` in `load_settings` and `open().read()` in `generate_merge_config`) were executed directly inside `async def` endpoints. This blocks the main Python event loop, preventing FastAPI from processing other concurrent requests or websocket events while waiting on disk access.
+**Action:** Wrapped synchronous file I/O operations inside `async def` endpoints with `await asyncio.to_thread()`. This offloads the blocking disk reads to a separate threadpool, allowing the main event loop to remain fully responsive to other async operations.
