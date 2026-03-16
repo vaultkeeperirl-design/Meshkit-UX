@@ -1,5 +1,17 @@
 import { memo } from "react";
 
+/**
+ * A memoized component that dynamically renders a visual representation of the merge process.
+ * Displays connections between the base model, input models, and the final output model
+ * based on the selected merge method.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} props.method - The selected merge method (e.g., 'slerp', 'ties', 'dare_ties'). Determines the visual connection layout.
+ * @param {string} props.baseModel - The ID or path of the base model used in the merge, if applicable.
+ * @param {Array<{model_id: string, parameters: string}>} props.models - An array of models being merged into the output.
+ * @returns {JSX.Element} The rendered visualization panel.
+ */
 const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, models }) {
   // Check how many non-empty models we have
   const validModelsCount = models.filter(m => m.model_id.trim() !== "").length;
