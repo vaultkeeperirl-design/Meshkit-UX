@@ -36,7 +36,7 @@ def update_settings(settings: dict):
 
 @router.post("/hf/config")
 async def get_hf_config(req: HFConfigReq):
-    settings = load_settings()
+    settings = await asyncio.to_thread(load_settings)
     token = req.token or settings.get("hf_token", "")
 
     config = await get_model_config(req.model_id, token)
@@ -48,8 +48,12 @@ async def get_hf_config(req: HFConfigReq):
 @router.post("/merge/generate-config")
 async def generate_merge_config(req: MergeConfigReq):
     yaml_path = await runner.generate_yaml(req.dict(), output_path="merge_config.yml")
-    with open(yaml_path, "r") as f:
-         yaml_content = f.read()
+
+    def _read_yaml():
+        with open(yaml_path, "r") as f:
+             return f.read()
+
+    yaml_content = await asyncio.to_thread(_read_yaml)
     return {"yaml_path": yaml_path, "yaml_content": yaml_content}
 
 @router.websocket("/ws/logs")
@@ -63,7 +67,7 @@ async def websocket_logs(websocket: WebSocket):
         request = json.loads(data)
         action = request.get("action")
 
-        settings = load_settings()
+        settings = await asyncio.to_thread(load_settings)
         env = os.environ.copy()
         if settings.get("hf_token"):
              env["HF_TOKEN"] = settings.get("hf_token")
