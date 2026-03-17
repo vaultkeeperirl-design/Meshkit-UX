@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Plus, Trash, Activity, AlertTriangle, Play, Eye, Loader2 } from "lucide-react";
+import { Plus, Trash, Activity, AlertTriangle, Play, Eye, Loader2, Check } from "lucide-react";
 import DynamicVisualizer from "../components/DynamicVisualizer";
 import CompactOutputPanel from "../components/CompactOutputPanel";
 
@@ -14,6 +14,7 @@ export default function MergeBuilder() {
   const [yamlPreview, setYamlPreview] = useState("");
   const [compatibilityIssue, setCompatibilityIssue] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generateSuccess, setGenerateSuccess] = useState(false);
 
   // Cache to store already fetched model configurations
   const configCache = useRef({});
@@ -137,6 +138,17 @@ export default function MergeBuilder() {
     window.__openLogsTab = () => setActiveTab("logs");
     return () => { delete window.__openLogsTab; };
   }, []);
+
+  const handlePreviewYaml = async () => {
+    try {
+      await generateYaml();
+      setActiveTab("yaml");
+      setGenerateSuccess(true);
+      setTimeout(() => setGenerateSuccess(false), 2000);
+    } catch {
+      setActiveTab("yaml");
+    }
+  };
 
   const generateYaml = async () => {
     setIsGenerating(true);
@@ -290,16 +302,22 @@ export default function MergeBuilder() {
 
           <div className="flex gap-4">
             <button
-                onClick={generateYaml}
-                disabled={isGenerating}
-                className="flex flex-1 items-center justify-center rounded-md bg-slate-700 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handlePreviewYaml}
+                disabled={isGenerating || generateSuccess}
+                className={`flex flex-1 items-center justify-center rounded-md px-3 py-3 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  generateSuccess
+                    ? "bg-green-600 hover:bg-green-500 focus-visible:outline-green-600"
+                    : "bg-slate-700 hover:bg-slate-600 focus-visible:outline-slate-600"
+                }`}
             >
                 {isGenerating ? (
                   <Loader2 size={18} className="mr-2 animate-spin" />
+                ) : generateSuccess ? (
+                  <Check size={18} className="mr-2" />
                 ) : (
                   <Eye size={18} className="mr-2" />
                 )}
-                {isGenerating ? "Generating..." : "Preview YAML"}
+                {isGenerating ? "Generating..." : generateSuccess ? "Generated!" : "Preview YAML"}
             </button>
             <button
                 onClick={handleRunMerge}
