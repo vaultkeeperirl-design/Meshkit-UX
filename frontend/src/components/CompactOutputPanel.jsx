@@ -20,19 +20,27 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
     <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 h-full flex flex-col min-h-[400px]">
         {/* Header Tabs */}
         <div className="flex justify-between items-center border-b border-slate-800 mb-4">
-            <div className="flex">
+            <div className="flex" role="tablist" aria-label="Output Views">
                 <button
+                    id="tab-yaml"
+                    role="tab"
+                    aria-selected={activeTab === "yaml"}
+                    aria-controls="tabpanel-yaml"
                     onClick={() => setActiveTab("yaml")}
                     className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded-t-md ${
-                        activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 border-b-2 border-transparent hover:text-slate-300"
+                        activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-400 border-b-2 border-transparent hover:text-slate-300"
                     }`}
                 >
                     YAML Output
                 </button>
                 <button
+                    id="tab-logs"
+                    role="tab"
+                    aria-selected={activeTab === "logs"}
+                    aria-controls="tabpanel-logs"
                     onClick={() => setActiveTab("logs")}
                     className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded-t-md ${
-                        activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-500 border-b-2 border-transparent hover:text-slate-300"
+                        activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-400 border-b-2 border-transparent hover:text-slate-300"
                     }`}
                 >
                     Process & Logs
@@ -60,13 +68,13 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
         {/* Tab Content */}
         <div className="flex-1 overflow-auto flex flex-col relative h-full">
             {activeTab === "yaml" && (
-                <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-4 bg-black/50 rounded-lg">
+                <pre id="tabpanel-yaml" role="tabpanel" aria-labelledby="tab-yaml" className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-4 bg-black/50 rounded-lg">
                     {yamlPreview || "# Click generate to preview configuration"}
                 </pre>
             )}
 
             {activeTab === "logs" && (
-                <div className="flex-1 rounded-lg overflow-hidden relative">
+                <div id="tabpanel-logs" role="tabpanel" aria-labelledby="tab-logs" className="flex-1 rounded-lg overflow-hidden relative">
                    <div className="absolute inset-0 bg-black/50 overflow-y-auto">
                         <ProcessLogs isCompact={true} />
                    </div>
