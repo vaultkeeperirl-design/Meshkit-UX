@@ -140,7 +140,7 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
         )}
         <div className={`text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto ${isCompact ? 'p-2' : 'bg-black p-4 rounded-lg'}`}>
           {logs.length === 0 ? (
-             <span className="text-slate-600">No active process. Ready...</span>
+             <span className="text-slate-400">No active process. Ready...</span>
           ) : (
              logs
           )}

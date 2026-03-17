@@ -236,7 +236,7 @@ export default function MergeBuilder() {
                   placeholder="t: 0.5&#10;density: 0.5"
                   className="block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6 font-mono h-24"
                />
-               <p className="mt-2 text-xs text-slate-500">One per line, e.g. \`key: value\`</p>
+               <p className="mt-2 text-xs text-slate-400">One per line, e.g. \`key: value\`</p>
             </div>
           </div>
 

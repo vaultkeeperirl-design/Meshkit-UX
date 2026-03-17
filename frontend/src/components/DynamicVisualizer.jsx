@@ -37,7 +37,7 @@ const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, m
         <div className="flex-1 flex items-center justify-center w-full">
             {validModelsCount === 0 && !hasBaseModel ? (
                 // Default empty state
-                renderModelNode("Awaiting Models", "bg-slate-800 border-slate-700 text-slate-500")
+                renderModelNode("Awaiting Models", "bg-slate-800 border-slate-700 text-slate-400")
             ) : (
                 <div className="flex flex-col items-center gap-4 w-full relative">
                    {/* Depending on method, show different connection styles */}
@@ -67,9 +67,9 @@ const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, m
                        <div className="w-full flex justify-center my-2">
                            <svg width="100" height="40" className="opacity-50">
                                {validModelsCount === 1 ? (
-                                   <line x1="50" y1="0" x2="50" y2="40" stroke="currentColor" strokeWidth="2" strokeDasharray="4" className="text-slate-500"/>
+                                   <line x1="50" y1="0" x2="50" y2="40" stroke="currentColor" strokeWidth="2" strokeDasharray="4" className="text-slate-400"/>
                                ) : (
-                                   <path d="M 20 0 C 20 20, 50 20, 50 40 M 80 0 C 80 20, 50 20, 50 40" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-500" />
+                                   <path d="M 20 0 C 20 20, 50 20, 50 40 M 80 0 C 80 20, 50 20, 50 40" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400" />
                                )}
                            </svg>
                        </div>
