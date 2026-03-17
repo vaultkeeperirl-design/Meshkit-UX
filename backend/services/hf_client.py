@@ -12,11 +12,16 @@ async def get_model_config(model_id: str, token: str = None) -> dict:
     headers = {"Authorization": f"Bearer {token}"} if token else {}
     url = f"https://huggingface.co/{model_id}/resolve/main/config.json"
 
-    response = await _client.get(url, headers=headers)
-    if response.status_code != 200:
-        return {"error": f"Failed to fetch config for {model_id}. Status: {response.status_code}. Is it a private/gated model without a valid token?"}
+    try:
+        response = await _client.get(url, headers=headers)
+        if response.status_code != 200:
+            return {"error": f"Failed to fetch config for {model_id}. Status: {response.status_code}. Is it a private/gated model without a valid token?"}
 
-    config = response.json()
+        config = response.json()
+    except httpx.RequestError as e:
+        return {"error": f"Network error while fetching config for {model_id}: {str(e)}"}
+    except ValueError as e:
+        return {"error": f"Invalid JSON response from HuggingFace for {model_id}: {str(e)}"}
 
     # Extract the key features we need for compatibility checks and visualization
     # Different model types have slightly different naming conventions in config.json
