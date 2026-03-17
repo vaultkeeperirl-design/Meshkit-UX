@@ -9,6 +9,46 @@ export default function Quantizer() {
   const [isStartingF16, setIsStartingF16] = useState(false);
   const [isStartingQuant, setIsStartingQuant] = useState(false);
 
+  const getBaseName = (path) => {
+    // Strip trailing slash if present
+    const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
+    if (cleanPath.endsWith('.gguf')) {
+      if (cleanPath.endsWith('_f16.gguf')) {
+         return cleanPath.slice(0, -9);
+      }
+      return cleanPath.slice(0, -5);
+    }
+    return cleanPath;
+  };
+
+  const handleModelPathChange = (e) => {
+    const newPath = e.target.value;
+    setModelPath(newPath);
+
+    // Auto-derive f16 and quant paths based on the new model path
+    const baseName = getBaseName(newPath);
+    setF16Path(`${baseName}_f16.gguf`);
+    setQuantPath(`${baseName}_${qType}.gguf`);
+  };
+
+  const handleF16PathChange = (e) => {
+    const newPath = e.target.value;
+    setF16Path(newPath);
+
+    // Auto-derive quant path based on the newly customized f16 path
+    const baseName = getBaseName(newPath);
+    setQuantPath(`${baseName}_${qType}.gguf`);
+  };
+
+  const handleQTypeChange = (e) => {
+    const newQType = e.target.value;
+    setQType(newQType);
+
+    // Re-derive quant path when type changes based on current f16 base
+    const baseName = getBaseName(f16Path);
+    setQuantPath(`${baseName}_${newQType}.gguf`);
+  };
+
   const startProcessAndViewLogs = (cmd, setStartingState) => {
     setStartingState(true);
     // Add a tiny delay so the user sees the "Starting..." state before the UI switches
@@ -62,17 +102,17 @@ export default function Quantizer() {
               id="inputModelPath"
               type="text"
               value={modelPath}
-              onChange={(e) => setModelPath(e.target.value)}
+              onChange={handleModelPathChange}
               className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             />
           </div>
           <div>
-            <label htmlFor="f16OutputPath" className="block text-sm font-medium leading-6 text-white">Output Path (Optional)</label>
+            <label htmlFor="f16OutputPath" className="block text-sm font-medium leading-6 text-white">Output F16 GGUF Path</label>
             <input
               id="f16OutputPath"
               type="text"
               value={f16Path}
-              onChange={(e) => setF16Path(e.target.value)}
+              onChange={handleF16PathChange}
               className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             />
           </div>
@@ -104,7 +144,7 @@ export default function Quantizer() {
               id="inputF16Path"
               type="text"
               value={f16Path}
-              onChange={(e) => setF16Path(e.target.value)}
+              onChange={handleF16PathChange}
               className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             />
           </div>
@@ -113,7 +153,7 @@ export default function Quantizer() {
             <select
                 id="quantType"
                 value={qType}
-                onChange={(e) => setQType(e.target.value)}
+                onChange={handleQTypeChange}
                 className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
             >
                 <option value="q4_k_m">Q4_K_M (Recommended)</option>
