@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef, memo } from "react";
 import { Terminal, Play, StopCircle } from "lucide-react";
 
+/**
+ * A memoized component that displays real-time process logs via a WebSocket connection.
+ * It listens for commands triggered across the application (via localStorage and custom events)
+ * to start background jobs like merging or quantization, and streams their output.
+ *
+ * @component
+ * @param {Object} props
+ * @param {boolean} [props.isCompact=false] - If true, renders a simplified UI without headers or borders, suitable for embedding in smaller panels.
+ * @returns {JSX.Element} The rendered logs terminal interface.
+ */
 const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   // Performance optimization: Store logs as a single string instead of an array.
   // This prevents O(N^2) memory reallocation during rapid websocket streams and
@@ -17,6 +27,12 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
     }
   }, [logs]);
 
+  /**
+   * Initializes a WebSocket connection to the backend to start a process and stream its logs.
+   * Closes any existing connection before starting a new one.
+   *
+   * @param {Object} cmdObject - The payload defining the job to run (e.g., action type, paths, parameters).
+   */
   const startProcess = (cmdObject) => {
     if (wsRef.current) {
         wsRef.current.close();
@@ -47,6 +63,11 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
     wsRef.current = ws;
   };
 
+  /**
+   * Effect hook to listen for a cross-component trigger to run a command.
+   * It reads the command payload from `localStorage`, starts the process,
+   * and immediately cleans up `localStorage` to prevent duplicate executions.
+   */
   useEffect(() => {
     const checkCommand = () => {
       const cmdStr = localStorage.getItem("runCommand");
