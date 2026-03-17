@@ -12,20 +12,23 @@ import { memo } from "react";
  * @param {Array<{model_id: string, parameters: string}>} props.models - An array of models being merged into the output.
  * @returns {JSX.Element} The rendered visualization panel.
  */
+// Performance optimization: Extracted renderModelNode outside the component body.
+// This prevents the function object from being recreated on every render of DynamicVisualizer,
+// reducing unnecessary memory allocation and garbage collection overhead.
+// A helper function to generate generic layer visualization
+const renderModelNode = (label, colorClass) => (
+  <div className={`p-4 rounded-xl border flex flex-col items-center justify-center space-y-2 transition-all duration-500 ${colorClass}`}>
+     <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
+     <div className="flex gap-1">
+        {[1,2,3].map(i => <div key={i} className="w-8 h-2 bg-current opacity-30 rounded-full" />)}
+     </div>
+  </div>
+);
+
 const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, models }) {
   // Check how many non-empty models we have
   const validModelsCount = models.filter(m => m.model_id.trim() !== "").length;
   const hasBaseModel = baseModel.trim() !== "";
-
-  // A helper function to generate generic layer visualization
-  const renderModelNode = (label, colorClass) => (
-    <div className={`p-4 rounded-xl border flex flex-col items-center justify-center space-y-2 transition-all duration-500 ${colorClass}`}>
-       <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
-       <div className="flex gap-1">
-          {[1,2,3].map(i => <div key={i} className="w-8 h-2 bg-current opacity-30 rounded-full" />)}
-       </div>
-    </div>
-  );
 
   return (
     <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[300px]">
