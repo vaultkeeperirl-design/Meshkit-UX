@@ -1,4 +1,5 @@
 import sys
+import os
 from PyInstaller.__main__ import run
 
 if __name__ == '__main__':
@@ -28,7 +29,7 @@ if __name__ == '__main__':
         '--hidden-import=torch',
         '--hidden-import=accelerate',
         '--hidden-import=websockets',
-        '--add-data=tools:tools', # Include tools (llama.cpp, mergekit scripts)
+        f'--add-data=tools{os.pathsep}tools', # Include tools (llama.cpp, mergekit scripts)
         '--paths=.'
     ]
     run(opts)
