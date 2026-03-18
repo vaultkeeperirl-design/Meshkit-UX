@@ -304,7 +304,7 @@ export default function MergeBuilder() {
             <button
                 onClick={handlePreviewYaml}
                 disabled={isGenerating || generateSuccess}
-                className={`flex flex-1 items-center justify-center rounded-md px-3 py-3 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`flex flex-1 items-center justify-center rounded-md px-3 py-3 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
                   generateSuccess
                     ? "bg-green-600 hover:bg-green-500 focus-visible:outline-green-600"
                     : "bg-slate-700 hover:bg-slate-600 focus-visible:outline-slate-600"
@@ -322,7 +322,7 @@ export default function MergeBuilder() {
             <button
                 onClick={handleRunMerge}
                 disabled={isGenerating}
-                className="flex flex-1 items-center justify-center rounded-md bg-blue-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex flex-1 items-center justify-center rounded-md bg-blue-600 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isGenerating ? (
                   <Loader2 size={18} className="mr-2 animate-spin" />
