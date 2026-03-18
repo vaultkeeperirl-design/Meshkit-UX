@@ -1,6 +1,20 @@
 import { useState } from "react";
 import { Box, Settings2, Play, Loader2 } from "lucide-react";
 
+// Performance Optimization: Hoisted pure function outside the component body
+// to prevent memory reallocation and garbage collection overhead on rapid keystroke re-renders.
+const getBaseName = (path) => {
+  // Strip trailing slash if present
+  const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
+  if (cleanPath.endsWith('.gguf')) {
+    if (cleanPath.endsWith('_f16.gguf')) {
+       return cleanPath.slice(0, -9);
+    }
+    return cleanPath.slice(0, -5);
+  }
+  return cleanPath;
+};
+
 export default function Quantizer() {
   const [modelPath, setModelPath] = useState("./merged_model");
   const [f16Path, setF16Path] = useState("./merged_model_f16.gguf");
@@ -8,18 +22,6 @@ export default function Quantizer() {
   const [qType, setQType] = useState("q4_k_m");
   const [isStartingF16, setIsStartingF16] = useState(false);
   const [isStartingQuant, setIsStartingQuant] = useState(false);
-
-  const getBaseName = (path) => {
-    // Strip trailing slash if present
-    const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
-    if (cleanPath.endsWith('.gguf')) {
-      if (cleanPath.endsWith('_f16.gguf')) {
-         return cleanPath.slice(0, -9);
-      }
-      return cleanPath.slice(0, -5);
-    }
-    return cleanPath;
-  };
 
   const handleModelPathChange = (e) => {
     const newPath = e.target.value;

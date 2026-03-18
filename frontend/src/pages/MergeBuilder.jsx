@@ -4,6 +4,28 @@ import { Plus, Trash, Activity, AlertTriangle, Play, Eye, Loader2, Check } from 
 import DynamicVisualizer from "../components/DynamicVisualizer";
 import CompactOutputPanel from "../components/CompactOutputPanel";
 
+// Performance Optimization: Hoisted static array and pure functions outside the component body
+// to prevent memory reallocation and garbage collection overhead on every rapid keystroke re-render.
+const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
+
+const parseParams = (paramString) => {
+  if (!paramString) return null;
+  try {
+    // Very basic parser: expects format "t: 0.5" or "weight: 1.0"
+    const lines = paramString.split('\n').filter(l => l.trim());
+    const obj = {};
+    lines.forEach(l => {
+      const [k, v] = l.split(':').map(s => s.trim());
+      // Attempt to parse number if possible, else string
+      const numV = Number(v);
+      obj[k] = isNaN(numV) ? v : numV;
+    });
+    return obj;
+  } catch {
+    return null;
+  }
+};
+
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
   const [copied, setCopied] = useState(false);
@@ -18,8 +40,6 @@ export default function MergeBuilder() {
 
   // Cache to store already fetched model configurations
   const configCache = useRef({});
-
-  const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
 
   useEffect(() => {
     const checkCompatibility = async () => {
@@ -113,24 +133,6 @@ export default function MergeBuilder() {
     const newModels = [...models];
     newModels[index][field] = value;
     setModels(newModels);
-  };
-
-  const parseParams = (paramString) => {
-    if (!paramString) return null;
-    try {
-      // Very basic parser: expects format "t: 0.5" or "weight: 1.0"
-      const lines = paramString.split('\n').filter(l => l.trim());
-      const obj = {};
-      lines.forEach(l => {
-        const [k, v] = l.split(':').map(s => s.trim());
-        // Attempt to parse number if possible, else string
-        const numV = Number(v);
-        obj[k] = isNaN(numV) ? v : numV;
-      });
-      return obj;
-    } catch {
-      return null;
-    }
   };
 
   // Expose a globally accessible method to switch tabs, bypassing React router
