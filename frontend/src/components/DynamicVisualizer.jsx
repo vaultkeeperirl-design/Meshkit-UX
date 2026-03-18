@@ -32,7 +32,7 @@ const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, m
 
   return (
     <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[300px]">
-        <h4 className="w-full text-sm font-medium text-slate-400 uppercase tracking-wider mb-6 border-b border-slate-800 pb-2 text-left">Merge Visualization: {method.toUpperCase()}</h4>
+        <h3 className="w-full text-sm font-medium text-slate-400 uppercase tracking-wider mb-6 border-b border-slate-800 pb-2 text-left">Merge Visualization: {method.toUpperCase()}</h3>
 
         <div className="flex-1 flex items-center justify-center w-full">
             {validModelsCount === 0 && !hasBaseModel ? (
