@@ -4,6 +4,15 @@ import { Plus, Trash, Activity, AlertTriangle, Play, Eye, Loader2, Check } from 
 import DynamicVisualizer from "../components/DynamicVisualizer";
 import CompactOutputPanel from "../components/CompactOutputPanel";
 
+/**
+ * The primary view for constructing Mergekit configurations.
+ * Allows users to select a merge method, define the base model and input models,
+ * adjust global and model-specific parameters, and preview the resulting YAML.
+ * Also handles backend validation for HuggingFace model architecture compatibility.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered MergeBuilder page.
+ */
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
   const [copied, setCopied] = useState(false);
