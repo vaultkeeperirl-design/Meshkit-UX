@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, memo } from "react";
+import { useState, useEffect, useRef, memo, useCallback } from "react";
 import { Terminal, Play, StopCircle } from "lucide-react";
 
 /**
@@ -33,7 +33,7 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
    *
    * @param {Object} cmdObject - The payload defining the job to run (e.g., action type, paths, parameters).
    */
-  const startProcess = (cmdObject) => {
+  const startProcess = useCallback((cmdObject) => {
     if (wsRef.current) {
         wsRef.current.close();
     }
@@ -61,34 +61,22 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
     };
 
     wsRef.current = ws;
-  };
+  }, []);
 
   /**
    * Effect hook to listen for a cross-component trigger to run a command.
-   * It reads the command payload from `localStorage`, starts the process,
-   * and immediately cleans up `localStorage` to prevent duplicate executions.
+   * It receives the command payload via the CustomEvent detail.
    */
   useEffect(() => {
-    const checkCommand = () => {
-      const cmdStr = localStorage.getItem("runCommand");
-      if (cmdStr) {
-        try {
-          const cmd = JSON.parse(cmdStr);
-          // Delay slightly to prevent setState during render cycle
-          setTimeout(() => {
-            startProcess(cmd);
-            localStorage.removeItem("runCommand");
-          }, 100);
-        } catch {
-          console.error("Invalid command found in localStorage");
-        }
+    const handleCommand = (e) => {
+      if (e.detail) {
+        startProcess(e.detail);
       }
     };
 
-    checkCommand();
-    window.addEventListener("runCommandTriggered", checkCommand);
-    return () => window.removeEventListener("runCommandTriggered", checkCommand);
-  }, []);
+    window.addEventListener("runCommandTriggered", handleCommand);
+    return () => window.removeEventListener("runCommandTriggered", handleCommand);
+  }, [startProcess]);
   const handleStartMerge = () => {
      startProcess({
         action: "merge",

@@ -53,8 +53,7 @@ export default function Quantizer() {
     setStartingState(true);
     // Add a tiny delay so the user sees the "Starting..." state before the UI switches
     setTimeout(() => {
-      localStorage.setItem("runCommand", JSON.stringify(cmd));
-      window.dispatchEvent(new Event("runCommandTriggered"));
+      window.dispatchEvent(new CustomEvent("runCommandTriggered", { detail: cmd }));
       if (window.__closeModals) window.__closeModals();
       if (window.__openLogsTab) window.__openLogsTab();
       setStartingState(false);
