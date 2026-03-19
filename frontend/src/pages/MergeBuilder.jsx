@@ -24,6 +24,7 @@ export default function MergeBuilder() {
   const [compatibilityIssue, setCompatibilityIssue] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateSuccess, setGenerateSuccess] = useState(false);
+  const [generateError, setGenerateError] = useState(null);
 
   // Cache to store already fetched model configurations
   const configCache = useRef({});
@@ -161,6 +162,7 @@ export default function MergeBuilder() {
 
   const generateYaml = async () => {
     setIsGenerating(true);
+    setGenerateError(null);
     const payload = {
       merge_method: method,
       base_model: baseModel || null,
@@ -176,7 +178,13 @@ export default function MergeBuilder() {
       setYamlPreview(res.data.yaml_content);
       return res.data;
     } catch (err) {
-      setYamlPreview("Error generating YAML: " + err.message);
+      let errorMessage = "An unexpected error occurred.";
+      if (err.response && err.response.data && err.response.data.detail) {
+        errorMessage = err.response.data.detail;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      setGenerateError(errorMessage);
       throw err;
     } finally {
       setIsGenerating(false);
@@ -308,6 +316,16 @@ export default function MergeBuilder() {
               </div>
             ))}
           </div>
+
+          {generateError && (
+              <div className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3">
+                  <AlertTriangle className="text-red-500 mt-0.5 shrink-0" size={20} />
+                  <div>
+                      <h4 className="text-sm font-medium text-red-400">Error Generating Configuration</h4>
+                      <p className="text-sm text-red-300 mt-1">{generateError}</p>
+                  </div>
+              </div>
+          )}
 
           <div className="flex gap-4">
             <button
