@@ -34,7 +34,7 @@ export default function Settings() {
   return (
     <div className="space-y-6">
       <div className="border-b border-slate-700 pb-5">
-        <h3 className="text-2xl font-semibold leading-6 text-white">Global Settings</h3>
+        <h2 className="text-2xl font-semibold leading-6 text-white">Global Settings</h2>
         <p className="mt-2 max-w-4xl text-sm text-slate-400">
           Configure API tokens and default output directories used across Mergekit Studio.
         </p>

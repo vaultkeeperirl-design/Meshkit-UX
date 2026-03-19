@@ -80,7 +80,7 @@ export default function Quantizer() {
   return (
     <div className="space-y-6">
       <div className="border-b border-slate-700 pb-5">
-        <h3 className="text-2xl font-semibold leading-6 text-white">Llama.cpp Quantizer</h3>
+        <h2 className="text-2xl font-semibold leading-6 text-white">Llama.cpp Quantizer</h2>
         <p className="mt-2 max-w-4xl text-sm text-slate-400">
           Convert your HuggingFace merged models to GGUF format and quantize them for LM Studio.
         </p>
@@ -88,9 +88,9 @@ export default function Quantizer() {
 
       {/* Step 1: Convert to F16 */}
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h4 className="text-lg font-medium text-white flex items-center gap-2">
+        <h3 className="text-lg font-medium text-white flex items-center gap-2">
             <Settings2 size={20} className="text-blue-400" /> Step 1: Convert HuggingFace to GGUF (F16)
-        </h4>
+        </h3>
         <p className="text-sm text-slate-400 mb-4">
             Before quantizing, the model must be converted to an uncompressed GGUF format.
         </p>
@@ -130,9 +130,9 @@ export default function Quantizer() {
 
       {/* Step 2: Quantize */}
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-        <h4 className="text-lg font-medium text-white flex items-center gap-2">
+        <h3 className="text-lg font-medium text-white flex items-center gap-2">
             <Box size={20} className="text-purple-400" /> Step 2: Quantize GGUF
-        </h4>
+        </h3>
         <p className="text-sm text-slate-400 mb-4">
             Compress the F16 GGUF model into a smaller format (e.g., 4-bit) for faster inference.
         </p>

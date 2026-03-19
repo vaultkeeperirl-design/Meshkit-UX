@@ -204,7 +204,7 @@ export default function MergeBuilder() {
       {/* Left Area: Main Content */}
       <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 md:p-8 space-y-8">
         <div className="border-b border-slate-700 pb-5 shrink-0">
-          <h3 className="text-2xl font-semibold leading-6 text-white">Merge Builder</h3>
+          <h2 className="text-2xl font-semibold leading-6 text-white">Merge Builder</h2>
           <p className="mt-2 max-w-4xl text-sm text-slate-400">
             Design your model merge configuration visually. Generates the required YAML for Mergekit.
           </p>
@@ -215,7 +215,7 @@ export default function MergeBuilder() {
               <div className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3">
                   <AlertTriangle className="text-red-500 mt-0.5" size={20} />
                   <div>
-                      <h4 className="text-sm font-medium text-red-400">Compatibility Warning</h4>
+                      <h3 className="text-sm font-medium text-red-400">Compatibility Warning</h3>
                       <p className="text-sm text-red-300 mt-1">{compatibilityIssue}</p>
                   </div>
               </div>
@@ -263,7 +263,7 @@ export default function MergeBuilder() {
 
           <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-lg font-medium text-white">Models</h4>
+              <h3 className="text-lg font-medium text-white">Models</h3>
               <button
                 onClick={handleAddModel}
                 className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-2 py-1 hover:bg-blue-400/10"
