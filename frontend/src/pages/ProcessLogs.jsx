@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, memo } from "react";
-import { Terminal, Play, StopCircle } from "lucide-react";
+import { Terminal, Play, StopCircle, Loader2 } from "lucide-react";
 
 /**
  * A memoized component that displays real-time process logs via a WebSocket connection.
@@ -120,7 +120,8 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
           disabled={isConnected}
           className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
          >
-          <Play size={16} /> Start Merge Job
+          {isConnected ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
+          {isConnected ? "Job Running..." : "Start Merge Job"}
          </button>
 
          <button
