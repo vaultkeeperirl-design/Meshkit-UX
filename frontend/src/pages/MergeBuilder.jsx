@@ -13,6 +13,30 @@ import CompactOutputPanel from "../components/CompactOutputPanel";
  * @component
  * @returns {JSX.Element} The rendered MergeBuilder page.
  */
+// Performance optimization: Extracted stateless helper functions and static arrays
+// outside the component body. This prevents them from being unnecessarily
+// re-allocated in memory on every keystroke when the component re-renders rapidly
+// due to the `models` array dependency, improving typing responsiveness.
+const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
+
+const parseParams = (paramString) => {
+  if (!paramString) return null;
+  try {
+    // Very basic parser: expects format "t: 0.5" or "weight: 1.0"
+    const lines = paramString.split('\n').filter(l => l.trim());
+    const obj = {};
+    lines.forEach(l => {
+      const [k, v] = l.split(':').map(s => s.trim());
+      // Attempt to parse number if possible, else string
+      const numV = Number(v);
+      obj[k] = isNaN(numV) ? v : numV;
+    });
+    return obj;
+  } catch {
+    return null;
+  }
+};
+
 export default function MergeBuilder() {
   const [method, setMethod] = useState("slerp");
   const [copied, setCopied] = useState(false);
@@ -27,8 +51,6 @@ export default function MergeBuilder() {
 
   // Cache to store already fetched model configurations
   const configCache = useRef({});
-
-  const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
 
   useEffect(() => {
     const checkCompatibility = async () => {
@@ -122,24 +144,6 @@ export default function MergeBuilder() {
     const newModels = [...models];
     newModels[index][field] = value;
     setModels(newModels);
-  };
-
-  const parseParams = (paramString) => {
-    if (!paramString) return null;
-    try {
-      // Very basic parser: expects format "t: 0.5" or "weight: 1.0"
-      const lines = paramString.split('\n').filter(l => l.trim());
-      const obj = {};
-      lines.forEach(l => {
-        const [k, v] = l.split(':').map(s => s.trim());
-        // Attempt to parse number if possible, else string
-        const numV = Number(v);
-        obj[k] = isNaN(numV) ? v : numV;
-      });
-      return obj;
-    } catch {
-      return null;
-    }
   };
 
   // Expose a globally accessible method to switch tabs, bypassing React router

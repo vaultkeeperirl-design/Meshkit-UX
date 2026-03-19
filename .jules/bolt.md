@@ -20,3 +20,7 @@
 ## 2024-06-19 - [Avoid Synchronous File I/O in FastAPI Async Endpoints]
 **Learning:** Found a performance bottleneck in `backend/api/endpoints.py` where synchronous disk I/O operations (`json.load` in `load_settings` and `open().read()` in `generate_merge_config`) were executed directly inside `async def` endpoints. This blocks the main Python event loop, preventing FastAPI from processing other concurrent requests or websocket events while waiting on disk access.
 **Action:** Wrapped synchronous file I/O operations inside `async def` endpoints with `await asyncio.to_thread()`. This offloads the blocking disk reads to a separate threadpool, allowing the main event loop to remain fully responsive to other async operations.
+
+## 2024-07-25 - [Extract Stateless Helper Functions to Prevent Reallocation]
+**Learning:** When dependencies update rapidly (like the `models` array on every keystroke), wrapping inline computations in `useMemo` degrades typing performance by forcing the computation during the render phase. Inline helper functions and arrays (like `parseParams` and `mergeMethods` in `MergeBuilder.jsx`) are also re-allocated on every render.
+**Action:** Prioritize extracting stateless helper functions and static arrays outside the component body. This prevents unnecessary memory reallocation during rapid re-renders without adding the overhead of `useMemo`.
