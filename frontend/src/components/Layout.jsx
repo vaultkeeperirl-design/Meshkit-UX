@@ -25,7 +25,7 @@ export default function Layout() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setOpenView("quantizer")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 ${
               openView === "quantizer"
                 ? "bg-blue-600 text-white"
                 : "text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -36,7 +36,7 @@ export default function Layout() {
           </button>
           <button
             onClick={() => setOpenView("settings")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 ${
               openView === "settings"
                 ? "bg-blue-600 text-white"
                 : "text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -68,7 +68,7 @@ export default function Layout() {
             <button
               onClick={() => setOpenView(null)}
               aria-label="Close modal"
-              className="absolute top-4 right-4 text-slate-400 hover:text-white z-50 bg-slate-800/80 rounded-full p-1 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white z-50 bg-slate-800/80 rounded-full p-1 transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <X size={24} />
             </button>
