@@ -65,29 +65,17 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
 
   /**
    * Effect hook to listen for a cross-component trigger to run a command.
-   * It reads the command payload from `localStorage`, starts the process,
-   * and immediately cleans up `localStorage` to prevent duplicate executions.
+   * It listens for custom events and starts the process using the payload.
    */
   useEffect(() => {
-    const checkCommand = () => {
-      const cmdStr = localStorage.getItem("runCommand");
-      if (cmdStr) {
-        try {
-          const cmd = JSON.parse(cmdStr);
-          // Delay slightly to prevent setState during render cycle
-          setTimeout(() => {
-            startProcess(cmd);
-            localStorage.removeItem("runCommand");
-          }, 100);
-        } catch {
-          console.error("Invalid command found in localStorage");
-        }
+    const handleCommand = (e) => {
+      if (e.detail) {
+        startProcess(e.detail);
       }
     };
 
-    checkCommand();
-    window.addEventListener("runCommandTriggered", checkCommand);
-    return () => window.removeEventListener("runCommandTriggered", checkCommand);
+    window.addEventListener("runCommandTriggered", handleCommand);
+    return () => window.removeEventListener("runCommandTriggered", handleCommand);
   }, []);
   const handleStartMerge = () => {
      startProcess({

@@ -67,19 +67,15 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
 
         {/* Tab Content */}
         <div className="flex-1 overflow-auto flex flex-col relative h-full">
-            {activeTab === "yaml" && (
-                <pre id="tabpanel-yaml" role="tabpanel" aria-labelledby="tab-yaml" className="text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-4 bg-black/50 rounded-lg">
-                    {yamlPreview || "# Click generate to preview configuration"}
-                </pre>
-            )}
+            <pre id="tabpanel-yaml" role="tabpanel" aria-labelledby="tab-yaml" className={`text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto p-4 bg-black/50 rounded-lg ${activeTab === "yaml" ? "block" : "hidden"}`}>
+                {yamlPreview || "# Click generate to preview configuration"}
+            </pre>
 
-            {activeTab === "logs" && (
-                <div id="tabpanel-logs" role="tabpanel" aria-labelledby="tab-logs" className="flex-1 rounded-lg overflow-hidden relative">
-                   <div className="absolute inset-0 bg-black/50 overflow-y-auto">
-                        <ProcessLogs isCompact={true} />
-                   </div>
-                </div>
-            )}
+            <div id="tabpanel-logs" role="tabpanel" aria-labelledby="tab-logs" className={`flex-1 rounded-lg overflow-hidden relative ${activeTab === "logs" ? "block" : "hidden"}`}>
+               <div className="absolute inset-0 bg-black/50 overflow-y-auto">
+                    <ProcessLogs isCompact={true} />
+               </div>
+            </div>
         </div>
     </div>
   );

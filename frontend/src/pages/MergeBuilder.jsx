@@ -186,13 +186,15 @@ export default function MergeBuilder() {
   const handleRunMerge = async () => {
     try {
       await generateYaml();
-      localStorage.setItem("runCommand", JSON.stringify({
+      const payload = {
         action: "merge",
         yaml_path: "merge_config.yml",
         output_path: "./merged_model"
-      }));
-      window.dispatchEvent(new Event("runCommandTriggered"));
+      };
       setActiveTab("logs");
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("runCommandTriggered", { detail: payload }));
+      }, 50); // Small delay to allow the activeTab to switch
     } catch (err) {
       // Error handled in generateYaml
       console.error(err);
