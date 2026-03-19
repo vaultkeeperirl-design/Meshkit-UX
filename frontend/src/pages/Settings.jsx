@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Save, Loader2 } from "lucide-react";
 
+/**
+ * A page component that provides a user interface for managing global application settings,
+ * such as the HuggingFace API token required for downloading gated models.
+ * It fetches the current settings from the backend on mount and allows updates to be saved.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Settings page.
+ */
 export default function Settings() {
   const [hfToken, setHfToken] = useState("");
   const [message, setMessage] = useState({ text: "", type: "" });

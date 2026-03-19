@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Box, Settings2, Play, Loader2 } from "lucide-react";
 
+/**
+ * A page component that provides a user interface for converting HuggingFace models
+ * to GGUF format and then quantizing them using llama.cpp.
+ * Allows users to configure input/output paths and select quantization types.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Quantizer page.
+ */
 export default function Quantizer() {
   const [modelPath, setModelPath] = useState("./merged_model");
   const [f16Path, setF16Path] = useState("./merged_model_f16.gguf");
@@ -9,6 +17,14 @@ export default function Quantizer() {
   const [isStartingF16, setIsStartingF16] = useState(false);
   const [isStartingQuant, setIsStartingQuant] = useState(false);
 
+  /**
+   * Helper function to extract the base name from a file path by stripping
+   * trailing slashes and common GGUF extensions. This is used to automatically
+   * derive the default paths for output files.
+   *
+   * @param {string} path - The input file or directory path.
+   * @returns {string} The base name of the path without GGUF extensions.
+   */
   const getBaseName = (path) => {
     // Strip trailing slash if present
     const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
@@ -49,6 +65,13 @@ export default function Quantizer() {
     setQuantPath(`${baseName}_${newQType}.gguf`);
   };
 
+  /**
+   * Triggers a background process by dispatching a custom event and switches
+   * the UI view to the process logs panel.
+   *
+   * @param {Object} cmd - The command payload to be executed (e.g., action type, file paths).
+   * @param {function(boolean): void} setStartingState - React state setter to toggle the loading spinner during startup.
+   */
   const startProcessAndViewLogs = (cmd, setStartingState) => {
     setStartingState(true);
     // Add a tiny delay so the user sees the "Starting..." state before the UI switches
