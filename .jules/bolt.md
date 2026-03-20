@@ -24,3 +24,7 @@
 ## 2024-07-25 - [Extract Stateless Helper Functions to Prevent Reallocation]
 **Learning:** When dependencies update rapidly (like the `models` array on every keystroke), wrapping inline computations in `useMemo` degrades typing performance by forcing the computation during the render phase. Inline helper functions and arrays (like `parseParams` and `mergeMethods` in `MergeBuilder.jsx`) are also re-allocated on every render.
 **Action:** Prioritize extracting stateless helper functions and static arrays outside the component body. This prevents unnecessary memory reallocation during rapid re-renders without adding the overhead of `useMemo`.
+
+## 2024-07-26 - [Custom React.memo Equality Function for Partial Props Updates]
+**Learning:** Found a performance bottleneck where rapid typing in the model `parameters` input caused the `DynamicVisualizer` component to re-render. Although `DynamicVisualizer` was wrapped in `React.memo()`, the parent's `models` array reference changed on every keystroke. Since the visualizer only cared about the `method`, `baseModel`, and `model_id`s (and ignored `parameters`), the default shallow comparison failed, causing unnecessary re-renders of a heavy UI panel.
+**Action:** Implemented a custom equality function for `React.memo()` in `DynamicVisualizer` that explicitly checks `method`, `baseModel`, and iterates through the `models` array to only compare `model_id`s. This successfully isolates the visualizer from parameter keystroke updates.
