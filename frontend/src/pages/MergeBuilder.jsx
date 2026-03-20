@@ -279,7 +279,7 @@ export default function MergeBuilder() {
               <h3 className="text-lg font-medium text-white">Models</h3>
               <button
                 onClick={handleAddModel}
-                className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-2 py-1 hover:bg-blue-400/10"
+                className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-2 py-1 hover:bg-blue-400/10"
               >
                 <Plus size={16} /> Add Model
               </button>
@@ -289,7 +289,7 @@ export default function MergeBuilder() {
               <div key={idx} className="bg-slate-900 p-4 rounded-lg border border-slate-700 relative group">
                 <button
                   onClick={() => handleRemoveModel(idx)}
-                  className="absolute top-4 right-4 text-red-400 hover:text-red-300 transition-colors focus-visible:outline focus-visible:ring-2 focus-visible:ring-red-500 rounded p-1.5 hover:bg-red-400/10 opacity-70 group-hover:opacity-100"
+                  className="absolute top-4 right-4 text-red-400 hover:text-red-300 transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-red-500 rounded p-1.5 hover:bg-red-400/10 opacity-70 group-hover:opacity-100"
                   aria-label="Remove model"
                   title="Remove model"
                 >
