@@ -11,15 +11,18 @@ client = TestClient(app)
 
 @patch("services.merge_runner.asyncio.create_subprocess_exec")
 def test_websocket_close_kills_process(mock_exec):
-    # Mock process
-    # `terminate` and `kill` are regular methods on an asyncio.subprocess.Process, not async methods.
     mock_process = MagicMock()
-    # Let readline hang to simulate a long running process
+    # To avoid the ProcessLookupError we saw earlier, we should ensure `kill` doesn't throw it
+    # in the mock or handle it properly. Wait should return immediately to unblock `run_command_with_websocket`
     async def mock_readline():
-        await asyncio.sleep(10)
+        await asyncio.sleep(1)
         return b""
     mock_process.stdout.readline = mock_readline
     mock_process.wait = AsyncMock()
+
+    # simulate active
+    mock_process.returncode = None
+
     mock_exec.return_value = mock_process
 
     with client.websocket_connect("/api/ws/logs") as websocket:
@@ -30,9 +33,6 @@ def test_websocket_close_kills_process(mock_exec):
         }))
         msg = websocket.receive_text()
         assert msg == "Starting merge: mergekit-yaml dummy.yml dummy_out --copy-tokenizer"
-
-        # Set returncode to None to simulate the process is still running
-        mock_process.returncode = None
 
         # Then close websocket, this should trigger Exception in the endpoint
         websocket.close()

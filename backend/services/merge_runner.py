@@ -83,8 +83,12 @@ class MergeRunner:
 
     async def cancel_process(self):
         if self.active_process:
-            self.active_process.terminate()
-            await asyncio.sleep(1) # wait for termination
-            if self.active_process: # if still alive
-                 self.active_process.kill()
+            try:
+                self.active_process.terminate()
+                await asyncio.sleep(1) # wait for termination
+                if self.active_process: # if still alive
+                     self.active_process.kill()
+            except ProcessLookupError:
+                # The process has already terminated
+                pass
             self.active_process = None
