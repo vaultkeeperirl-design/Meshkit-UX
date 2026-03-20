@@ -182,11 +182,11 @@ export default function MergeBuilder() {
       setYamlPreview(res.data.yaml_content);
       return res.data;
     } catch (err) {
-      let errorMessage = "An unexpected error occurred.";
-      if (err.response && err.response.data && err.response.data.detail) {
+      let errorMessage = "Could not generate configuration. Please check your model parameters and try again.";
+      if (err.response?.data?.detail) {
         errorMessage = err.response.data.detail;
-      } else if (err.message) {
-        errorMessage = err.message;
+      } else if (err.message === "Network Error") {
+        errorMessage = "Unable to connect to the backend server. Please ensure it is running.";
       }
       setGenerateError(errorMessage);
       throw err;
