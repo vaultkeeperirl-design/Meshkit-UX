@@ -225,7 +225,11 @@ export default function MergeBuilder() {
 
         <div className="max-w-4xl w-full space-y-6">
           {compatibilityIssue && (
-              <div className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3">
+              <div
+                className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3"
+                role="alert"
+                aria-live="assertive"
+              >
                   <AlertTriangle className="text-red-500 mt-0.5" size={20} />
                   <div>
                       <h3 className="text-sm font-medium text-red-400">Compatibility Warning</h3>
@@ -323,7 +327,11 @@ export default function MergeBuilder() {
           </div>
 
           {generateError && (
-              <div className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3">
+              <div
+                className="bg-red-900/20 border border-red-800 p-4 rounded-lg flex items-start gap-3"
+                role="alert"
+                aria-live="assertive"
+              >
                   <AlertTriangle className="text-red-500 mt-0.5 shrink-0" size={20} />
                   <div>
                       <h4 className="text-sm font-medium text-red-400">Error Generating Configuration</h4>
