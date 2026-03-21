@@ -86,6 +86,20 @@ const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, m
         </div>
     </div>
   );
+}, (prevProps, nextProps) => {
+  // Performance optimization: Custom equality function to prevent unnecessary re-renders
+  // of this heavy UI component. The parent component's `models` array reference changes
+  // on every keystroke in the "Parameters" input field, which normally breaks React.memo.
+  // We only care about `method`, `baseModel`, and `model_id`s, so we explicitly check those.
+  if (prevProps.method !== nextProps.method) return false;
+  if (prevProps.baseModel !== nextProps.baseModel) return false;
+  if (prevProps.models.length !== nextProps.models.length) return false;
+
+  for (let i = 0; i < prevProps.models.length; i++) {
+    if (prevProps.models[i].model_id !== nextProps.models[i].model_id) return false;
+  }
+
+  return true;
 });
 
 export default DynamicVisualizer;
