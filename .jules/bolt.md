@@ -24,3 +24,7 @@
 ## 2024-07-25 - [Extract Stateless Helper Functions to Prevent Reallocation]
 **Learning:** When dependencies update rapidly (like the `models` array on every keystroke), wrapping inline computations in `useMemo` degrades typing performance by forcing the computation during the render phase. Inline helper functions and arrays (like `parseParams` and `mergeMethods` in `MergeBuilder.jsx`) are also re-allocated on every render.
 **Action:** Prioritize extracting stateless helper functions and static arrays outside the component body. This prevents unnecessary memory reallocation during rapid re-renders without adding the overhead of `useMemo`.
+
+## 2024-08-01 - [Custom React.memo Equality Function for Nested Objects]
+**Learning:** Passing a newly created array of objects (like the `models` state in `MergeBuilder.jsx`) as a prop to a memoized child component (`DynamicVisualizer`) bypasses the default shallow comparison of `React.memo()`. Because the array reference changes on every keystroke, the child component still re-renders unnecessarily, degrading performance.
+**Action:** Implemented a custom equality function `(prevProps, nextProps) => boolean` as the second argument to `React.memo()`. This function explicitly checks the properties that matter for rendering (e.g., specific `model_id`s within the array) instead of relying on array references, successfully preventing wasteful re-renders.

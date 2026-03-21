@@ -25,10 +25,11 @@ const renderModelNode = (label, colorClass) => (
   </div>
 );
 
-const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, models }) {
-  // Check how many non-empty models we have
-  const validModelsCount = models.filter(m => m.model_id.trim() !== "").length;
-  const hasBaseModel = baseModel.trim() !== "";
+const DynamicVisualizer = memo(
+  function DynamicVisualizer({ method, baseModel, models }) {
+    // Check how many non-empty models we have
+    const validModelsCount = models.filter(m => m.model_id.trim() !== "").length;
+    const hasBaseModel = baseModel.trim() !== "";
 
   return (
     <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[300px]">
@@ -86,6 +87,21 @@ const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, m
         </div>
     </div>
   );
-});
+  },
+  (prevProps, nextProps) => {
+    // Custom equality function to prevent unnecessary re-renders
+    // Only compare properties that actually affect the visualization
+    if (prevProps.method !== nextProps.method) return false;
+    if (prevProps.baseModel !== nextProps.baseModel) return false;
+    if (prevProps.models.length !== nextProps.models.length) return false;
+
+    // The visualizer only cares about model_id, not parameters or other fields
+    for (let i = 0; i < prevProps.models.length; i++) {
+      if (prevProps.models[i].model_id !== nextProps.models[i].model_id) return false;
+    }
+
+    return true;
+  }
+);
 
 export default DynamicVisualizer;
