@@ -78,7 +78,7 @@ export default function Settings() {
             {isSaving ? "Saving..." : "Save Settings"}
           </button>
           {message.text && (
-            <p className={`text-sm ${message.type === "error" ? "text-red-400" : "text-green-400"}`}>
+            <p role="status" aria-live="polite" className={`text-sm ${message.type === "error" ? "text-red-400" : "text-green-400"}`}>
               {message.text}
             </p>
           )}
