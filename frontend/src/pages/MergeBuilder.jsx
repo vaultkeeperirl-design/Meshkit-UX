@@ -43,6 +43,8 @@ export default function MergeBuilder() {
   const [activeTab, setActiveTab] = useState("yaml");
   const [baseModel, setBaseModel] = useState("");
   const [models, setModels] = useState([{ model_id: "", parameters: "" }]);
+  const [justAddedModel, setJustAddedModel] = useState(false);
+  const lastModelInputRef = useRef(null);
   const [globalParams, setGlobalParams] = useState("");
   const [yamlPreview, setYamlPreview] = useState("");
   const [compatibilityIssue, setCompatibilityIssue] = useState(null);
@@ -133,7 +135,17 @@ export default function MergeBuilder() {
     return () => clearTimeout(timeoutId);
   }, [baseModel, models]);
 
-  const handleAddModel = () => setModels([...models, { model_id: "", parameters: "" }]);
+  const handleAddModel = () => {
+    setModels([...models, { model_id: "", parameters: "" }]);
+    setJustAddedModel(true);
+  };
+
+  useEffect(() => {
+    if (justAddedModel && lastModelInputRef.current) {
+      lastModelInputRef.current.focus();
+      setJustAddedModel(false);
+    }
+  }, [models.length, justAddedModel]);
 
   const handleRemoveModel = (index) => {
     const newModels = [...models];
@@ -249,7 +261,7 @@ export default function MergeBuilder() {
 
             {["ties", "dare_ties", "dare_linear", "passthrough"].includes(method) && (
               <div>
-                <label htmlFor="baseModel" className="block text-sm font-medium leading-6 text-white">Base Model (Optional/Required for Method)</label>
+                <label htmlFor="baseModel" className="block text-sm font-medium leading-6 text-white">Base Model</label>
                 <input
                   id="baseModel"
                   type="text"
@@ -299,6 +311,7 @@ export default function MergeBuilder() {
                   <div>
                     <label htmlFor={`modelId-${idx}`} className="block text-sm font-medium leading-6 text-white">Model ID / Path</label>
                     <input
+                      ref={idx === models.length - 1 ? lastModelInputRef : null}
                       id={`modelId-${idx}`}
                       type="text"
                       value={m.model_id}

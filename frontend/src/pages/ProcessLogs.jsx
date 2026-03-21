@@ -77,13 +77,6 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
     window.addEventListener("runCommandTriggered", handleCommand);
     return () => window.removeEventListener("runCommandTriggered", handleCommand);
   }, [startProcess]);
-  const handleStartMerge = () => {
-     startProcess({
-        action: "merge",
-        yaml_path: "merge_config.yml",
-        output_path: "./merged_model"
-     });
-  };
 
   const stopProcess = () => {
       if (wsRef.current) {
@@ -103,14 +96,6 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
       )}
 
       <div className="flex gap-4 mb-2">
-         <button
-          onClick={handleStartMerge}
-          disabled={isConnected}
-          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
-         >
-          <Play size={16} /> Start Merge Job
-         </button>
-
          <button
           onClick={stopProcess}
           disabled={!isConnected}
