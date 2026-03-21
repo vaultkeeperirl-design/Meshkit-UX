@@ -19,6 +19,14 @@ import CompactOutputPanel from "../components/CompactOutputPanel";
 // due to the `models` array dependency, improving typing responsiveness.
 const mergeMethods = ["slerp", "ties", "dare_ties", "dare_linear", "passthrough", "linear"];
 
+/**
+ * Parses a multiline string of key-value parameters into an object.
+ * Expects each line to be formatted as "key: value" (e.g., "t: 0.5" or "weight: 1.0").
+ * Attempts to parse numeric values; otherwise, keeps them as strings.
+ *
+ * @param {string} paramString - The multiline string containing parameters.
+ * @returns {Object|null} The parsed parameters as an object, or null if input is empty/invalid.
+ */
 const parseParams = (paramString) => {
   if (!paramString) return null;
   try {
