@@ -5,10 +5,26 @@ from fastapi import WebSocket
 from typing import Dict, Any
 
 class MergeRunner:
+    """
+    Manages the execution and monitoring of background processes for model merging and quantization.
+
+    Provides utilities to generate mergekit YAML configurations from UI payloads and to run
+    shell commands asynchronously while streaming their output to a connected WebSocket client.
+    """
     def __init__(self):
         self.active_process = None
 
     async def generate_yaml(self, config_data: Dict[str, Any], output_path: str = "merge_config.yml") -> str:
+        """
+        Generates a mergekit-compatible YAML configuration file from a dictionary payload.
+
+        Args:
+            config_data (Dict[str, Any]): The configuration data received from the UI.
+            output_path (str, optional): The file path where the YAML will be saved. Defaults to "merge_config.yml".
+
+        Returns:
+            str: The file path to the generated YAML file.
+        """
         # Convert our UI JSON into the exact format mergekit expects
 
         # Mapping UI models to mergekit format
@@ -82,9 +98,21 @@ class MergeRunner:
                 self.active_process = None
 
     async def cancel_process(self):
+        """
+        Gracefully terminates and kills the currently active background process.
+
+        Attempts to terminate the process first, waits briefly, and then forces a kill
+        if it remains alive. Safely handles race conditions via try...except.
+        """
         if self.active_process:
-            self.active_process.terminate()
+            try:
+                self.active_process.terminate()
+            except ProcessLookupError:
+                pass
             await asyncio.sleep(1) # wait for termination
             if self.active_process: # if still alive
-                 self.active_process.kill()
+                 try:
+                     self.active_process.kill()
+                 except ProcessLookupError:
+                     pass
             self.active_process = None
