@@ -37,7 +37,7 @@ const DynamicVisualizer = memo(function DynamicVisualizer({ method, baseModel, m
         <div className="flex-1 flex items-center justify-center w-full">
             {validModelsCount === 0 && !hasBaseModel ? (
                 // Default empty state
-                renderModelNode("Awaiting Models", "bg-slate-800 border-slate-700 text-slate-400")
+                renderModelNode("Awaiting Models", "bg-slate-800/50 border-slate-700/50 text-slate-500 animate-pulse")
             ) : (
                 <div className="flex flex-col items-center gap-4 w-full relative">
                    {/* Depending on method, show different connection styles */}
