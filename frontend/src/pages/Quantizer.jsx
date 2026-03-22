@@ -9,6 +9,28 @@ import { Box, Settings2, Play, Loader2 } from "lucide-react";
  * @component
  * @returns {JSX.Element} The rendered Quantizer page.
  */
+/**
+ * Helper function to extract the base name from a file path by stripping
+ * trailing slashes and common GGUF extensions. This is used to automatically
+ * derive the default paths for output files.
+ *
+ * @param {string} path - The input file or directory path.
+ * @returns {string} The base name of the path without GGUF extensions.
+ */
+// Performance optimization: Extracted stateless helper function outside the component
+// body to prevent unnecessary memory reallocation during rapid typing re-renders.
+const getBaseName = (path) => {
+  // Strip trailing slash if present
+  const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
+  if (cleanPath.endsWith('.gguf')) {
+    if (cleanPath.endsWith('_f16.gguf')) {
+       return cleanPath.slice(0, -9);
+    }
+    return cleanPath.slice(0, -5);
+  }
+  return cleanPath;
+};
+
 export default function Quantizer() {
   const [modelPath, setModelPath] = useState("./merged_model");
   const [f16Path, setF16Path] = useState("./merged_model_f16.gguf");
@@ -16,26 +38,6 @@ export default function Quantizer() {
   const [qType, setQType] = useState("q4_k_m");
   const [isStartingF16, setIsStartingF16] = useState(false);
   const [isStartingQuant, setIsStartingQuant] = useState(false);
-
-  /**
-   * Helper function to extract the base name from a file path by stripping
-   * trailing slashes and common GGUF extensions. This is used to automatically
-   * derive the default paths for output files.
-   *
-   * @param {string} path - The input file or directory path.
-   * @returns {string} The base name of the path without GGUF extensions.
-   */
-  const getBaseName = (path) => {
-    // Strip trailing slash if present
-    const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
-    if (cleanPath.endsWith('.gguf')) {
-      if (cleanPath.endsWith('_f16.gguf')) {
-         return cleanPath.slice(0, -9);
-      }
-      return cleanPath.slice(0, -5);
-    }
-    return cleanPath;
-  };
 
   const handleModelPathChange = (e) => {
     const newPath = e.target.value;
