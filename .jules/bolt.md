@@ -5,6 +5,7 @@
 ## 2024-05-25 - [O(n²) Array Copying in Streaming Logs]
 **Learning:** React state updates using the spread operator `setLogs(prev => [...prev, newLog])` inside a rapid websocket stream create an O(N²) memory allocation and garbage collection nightmare. Furthermore, mapping thousands of array items into individual `<div>` DOM nodes freezes the main thread.
 **Action:** Convert the state to a single string (`""`) and use string concatenation `setLogs(prev => prev + newLog + '\n')`. Render the single text node within a `whitespace-pre-wrap` container to offload rendering layout to the browser efficiently.
+
 ## 2024-05-26 - [Avoid Re-renders of Heavy UI Panels on Form Keystrokes]
 **Learning:** Found a performance bottleneck where rapid typing in the main form (e.g., `MergeBuilder`) caused complex child components like `DynamicVisualizer`, `CompactOutputPanel`, and `ProcessLogs` to re-render entirely. This caused laggy text input and UI unresponsiveness.
 **Action:** Wrapped heavy child components in `React.memo()` to isolate them from their parent's state updates, specifically avoiding re-renders unless their explicit props change.
@@ -28,3 +29,7 @@
 ## 2024-07-26 - [Custom React.memo Equality Function for Partial Props Updates]
 **Learning:** Found a performance bottleneck where rapid typing in the model `parameters` input caused the `DynamicVisualizer` component to re-render. Although `DynamicVisualizer` was wrapped in `React.memo()`, the parent's `models` array reference changed on every keystroke. Since the visualizer only cared about the `method`, `baseModel`, and `model_id`s (and ignored `parameters`), the default shallow comparison failed, causing unnecessary re-renders of a heavy UI panel.
 **Action:** Implemented a custom equality function for `React.memo()` in `DynamicVisualizer` that explicitly checks `method`, `baseModel`, and iterates through the `models` array to only compare `model_id`s. This successfully isolates the visualizer from parameter keystroke updates.
+
+## 2025-02-28 - [Extract Stateless Helpers in React to Prevent Reallocation]
+**Learning:** Discovered a codebase-specific pattern where extracting stateless helper functions, like `getBaseName` in `Quantizer.jsx`, to the module scope (outside the component function) avoids unnecessary memory reallocation on every keystroke when typing into text fields.
+**Action:** Always scan for helper functions that don't depend on component props or state, and extract them outside of the React component body to reduce garbage collection overhead during rapid parent state updates.
