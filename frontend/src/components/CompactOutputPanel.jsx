@@ -47,21 +47,29 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
                 </button>
             </div>
             {activeTab === "yaml" && (
-                <button
-                    onClick={() => {
-                        if (yamlPreview) {
-                            navigator.clipboard.writeText(yamlPreview);
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                        }
-                    }}
-                    disabled={!yamlPreview}
-                    className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 mr-2"
-                    aria-label="Copy YAML to clipboard"
-                    title="Copy YAML"
-                >
-                    {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-                </button>
+                <div className="flex items-center">
+                    <span
+                        className={`text-sm text-green-500 mr-2 transition-opacity duration-200 ${copied ? 'opacity-100' : 'opacity-0'}`}
+                        aria-hidden={!copied}
+                    >
+                        Copied!
+                    </span>
+                    <button
+                        onClick={() => {
+                            if (yamlPreview) {
+                                navigator.clipboard.writeText(yamlPreview);
+                                setCopied(true);
+                                setTimeout(() => setCopied(false), 2000);
+                            }
+                        }}
+                        disabled={!yamlPreview}
+                        className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 mr-2"
+                        aria-label="Copy YAML to clipboard"
+                        title="Copy YAML"
+                    >
+                        {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    </button>
+                </div>
             )}
         </div>
 
