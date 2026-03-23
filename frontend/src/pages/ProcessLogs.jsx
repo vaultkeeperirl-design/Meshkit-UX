@@ -19,6 +19,8 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
   const logEndRef = useRef(null);
+  const logBufferRef = useRef([]);
+  const rafIdRef = useRef(null);
 
   useEffect(() => {
     // Auto scroll to bottom when new logs arrive
@@ -26,6 +28,15 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
       logEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [logs]);
+
+  // Cleanup requestAnimationFrame on unmount to prevent memory leaks in background tabs
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
+  }, []);
 
   /**
    * Initializes a WebSocket connection to the backend to start a process and stream its logs.
@@ -48,7 +59,16 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
     };
 
     ws.onmessage = (event) => {
-      setLogs(prev => prev + event.data + "\n");
+      logBufferRef.current.push(event.data + "\n");
+
+      if (!rafIdRef.current) {
+        rafIdRef.current = requestAnimationFrame(() => {
+          const newLogs = logBufferRef.current.join("");
+          logBufferRef.current = [];
+          setLogs(prev => prev + newLogs);
+          rafIdRef.current = null;
+        });
+      }
     };
 
     ws.onerror = (error) => {
