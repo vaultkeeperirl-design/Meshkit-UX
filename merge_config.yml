@@ -1,4 +1,0 @@
-merge_method: ties
-models:
-- model: ''
-base_model: test/base-model

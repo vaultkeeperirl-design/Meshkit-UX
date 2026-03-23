@@ -19,6 +19,8 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
   const logEndRef = useRef(null);
+  const logBuffer = useRef([]);
+  const animationFrameId = useRef(null);
 
   useEffect(() => {
     // Auto scroll to bottom when new logs arrive
@@ -26,6 +28,14 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
       logEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [logs]);
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, []);
 
   /**
    * Initializes a WebSocket connection to the backend to start a process and stream its logs.
@@ -48,7 +58,14 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
     };
 
     ws.onmessage = (event) => {
-      setLogs(prev => prev + event.data + "\n");
+      logBuffer.current.push(event.data + "\n");
+      if (!animationFrameId.current) {
+        animationFrameId.current = requestAnimationFrame(() => {
+          setLogs(prev => prev + logBuffer.current.join(""));
+          logBuffer.current = [];
+          animationFrameId.current = null;
+        });
+      }
     };
 
     ws.onerror = (error) => {

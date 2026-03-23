@@ -28,3 +28,7 @@
 ## 2024-07-26 - [Custom React.memo Equality Function for Partial Props Updates]
 **Learning:** Found a performance bottleneck where rapid typing in the model `parameters` input caused the `DynamicVisualizer` component to re-render. Although `DynamicVisualizer` was wrapped in `React.memo()`, the parent's `models` array reference changed on every keystroke. Since the visualizer only cared about the `method`, `baseModel`, and `model_id`s (and ignored `parameters`), the default shallow comparison failed, causing unnecessary re-renders of a heavy UI panel.
 **Action:** Implemented a custom equality function for `React.memo()` in `DynamicVisualizer` that explicitly checks `method`, `baseModel`, and iterates through the `models` array to only compare `model_id`s. This successfully isolates the visualizer from parameter keystroke updates.
+
+## 2026-03-23 - [Batching High-Frequency WebSocket State Updates]
+**Learning:** Found a performance bottleneck in `ProcessLogs.jsx` where high-frequency WebSocket data streams mapped directly to `setLogs` caused excessive re-renders and string copying overhead, impacting main thread performance and responsiveness.
+**Action:** Buffered incoming data in a `useRef` array and batched state updates using `requestAnimationFrame` (60fps throttling) to minimize re-renders and prevent O(N) string copying overhead.
