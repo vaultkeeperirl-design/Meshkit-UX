@@ -5,10 +5,31 @@ from fastapi import WebSocket
 from typing import Dict, Any
 
 class MergeRunner:
+    """
+    Service responsible for executing mergekit and llama.cpp operations as subprocesses.
+
+    This class handles generating configuration files, running shell commands
+    asynchronously, and streaming their standard output/error to a connected
+    WebSocket client in real-time.
+    """
+
     def __init__(self):
+        """
+        Initializes the MergeRunner instance.
+        """
         self.active_process = None
 
     async def generate_yaml(self, config_data: Dict[str, Any], output_path: str = "merge_config.yml") -> str:
+        """
+        Converts the UI JSON configuration into the exact YAML format expected by mergekit.
+
+        Args:
+            config_data (Dict[str, Any]): The configuration data received from the UI.
+            output_path (str, optional): The file path where the YAML will be saved. Defaults to "merge_config.yml".
+
+        Returns:
+            str: The output path of the generated YAML file.
+        """
         # Convert our UI JSON into the exact format mergekit expects
 
         # Mapping UI models to mergekit format
@@ -42,7 +63,18 @@ class MergeRunner:
         return output_path
 
     async def run_command_with_websocket(self, cmd: list, websocket: WebSocket, env: dict = None, task_name: str = "Process"):
-        """Runs a shell command and streams its output (stdout and stderr) to a websocket client."""
+        """
+        Runs a shell command and streams its output (stdout and stderr) to a websocket client.
+
+        Args:
+            cmd (list): The command to execute, represented as a list of strings.
+            websocket (WebSocket): The active WebSocket connection to stream output to.
+            env (dict, optional): Environment variables to pass to the subprocess. Defaults to None.
+            task_name (str, optional): A descriptive name for the task being run. Defaults to "Process".
+
+        Raises:
+            Exception: Re-raises any exceptions encountered during execution or streaming.
+        """
         process = await asyncio.create_subprocess_exec(
             *cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -82,9 +114,22 @@ class MergeRunner:
                 self.active_process = None
 
     async def cancel_process(self):
+        """
+        Cancels the currently running active subprocess, if any.
+
+        It first attempts to terminate the process gracefully. If the process
+        does not exit within 1 second, it forcibly kills it. Handles exceptions
+        gracefully to prevent race conditions during termination.
+        """
         if self.active_process:
-            self.active_process.terminate()
+            try:
+                self.active_process.terminate()
+            except ProcessLookupError:
+                pass
             await asyncio.sleep(1) # wait for termination
             if self.active_process: # if still alive
-                 self.active_process.kill()
+                 try:
+                     self.active_process.kill()
+                 except ProcessLookupError:
+                     pass
             self.active_process = None
