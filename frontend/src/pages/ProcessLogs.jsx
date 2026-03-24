@@ -19,6 +19,19 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
   const logEndRef = useRef(null);
+  const logBuffer = useRef([]);
+  const rafId = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (rafId.current) {
+        cancelAnimationFrame(rafId.current);
+      }
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Auto scroll to bottom when new logs arrive
@@ -33,35 +46,52 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
    *
    * @param {Object} cmdObject - The payload defining the job to run (e.g., action type, paths, parameters).
    */
+  const queueLog = useCallback((message) => {
+    logBuffer.current.push(message);
+    if (!rafId.current) {
+      rafId.current = requestAnimationFrame(() => {
+        const newLogs = logBuffer.current.join("");
+        logBuffer.current = [];
+        setLogs((prev) => prev + newLogs);
+        rafId.current = null;
+      });
+    }
+  }, []);
+
   const startProcess = useCallback((cmdObject) => {
     if (wsRef.current) {
         wsRef.current.close();
     }
     setLogs(`Connecting to backend for action: ${cmdObject.action}...\n`);
+    logBuffer.current = [];
+    if (rafId.current) {
+      cancelAnimationFrame(rafId.current);
+      rafId.current = null;
+    }
 
     const ws = new WebSocket("ws://localhost:8000/api/ws/logs");
 
     ws.onopen = () => {
       setIsConnected(true);
-      setLogs(prev => prev + "Connected. Starting process...\n");
+      queueLog("Connected. Starting process...\n");
       ws.send(JSON.stringify(cmdObject));
     };
 
     ws.onmessage = (event) => {
-      setLogs(prev => prev + event.data + "\n");
+      queueLog(event.data + "\n");
     };
 
     ws.onerror = (error) => {
-      setLogs(prev => prev + `[WebSocket Error] ${error.message || "Unknown error"}\n`);
+      queueLog(`[WebSocket Error] ${error.message || "Unknown error"}\n`);
     };
 
     ws.onclose = () => {
       setIsConnected(false);
-      setLogs(prev => prev + "[Process Completed / Disconnected]\n");
+      queueLog("[Process Completed / Disconnected]\n");
     };
 
     wsRef.current = ws;
-  }, []);
+  }, [queueLog]);
 
   /**
    * Effect hook to listen for a cross-component trigger to run a command.
