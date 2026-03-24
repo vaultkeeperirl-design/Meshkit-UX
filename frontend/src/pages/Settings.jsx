@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, AlertTriangle, Check } from "lucide-react";
 
 /**
  * A page component that provides a user interface for managing global application settings,
@@ -78,7 +78,8 @@ export default function Settings() {
             {isSaving ? "Saving..." : "Save Settings"}
           </button>
           {message.text && (
-            <p role="status" aria-live="polite" className={`text-sm ${message.type === "error" ? "text-red-400" : "text-green-400"}`}>
+            <p role="status" aria-live="polite" className={`text-sm flex items-center gap-2 ${message.type === "error" ? "text-red-400" : "text-green-400"}`}>
+              {message.type === "error" ? <AlertTriangle size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}
               {message.text}
             </p>
           )}
