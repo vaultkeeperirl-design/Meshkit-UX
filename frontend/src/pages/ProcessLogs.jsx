@@ -19,6 +19,24 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
   const logEndRef = useRef(null);
+  const bufferRef = useRef([]);
+  const rafRef = useRef(null);
+
+  const flushBuffer = useCallback(() => {
+    if (bufferRef.current.length > 0) {
+      const newLogs = bufferRef.current.join("\n") + "\n";
+      setLogs(prev => prev + newLogs);
+      bufferRef.current = [];
+    }
+    rafRef.current = null;
+  }, []);
+
+  const appendLog = useCallback((message) => {
+    bufferRef.current.push(message);
+    if (!rafRef.current) {
+      rafRef.current = requestAnimationFrame(flushBuffer);
+    }
+  }, [flushBuffer]);
 
   useEffect(() => {
     // Auto scroll to bottom when new logs arrive
@@ -26,6 +44,14 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
       logEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [logs]);
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
 
   /**
    * Initializes a WebSocket connection to the backend to start a process and stream its logs.
@@ -43,25 +69,25 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
 
     ws.onopen = () => {
       setIsConnected(true);
-      setLogs(prev => prev + "Connected. Starting process...\n");
+      appendLog("Connected. Starting process...");
       ws.send(JSON.stringify(cmdObject));
     };
 
     ws.onmessage = (event) => {
-      setLogs(prev => prev + event.data + "\n");
+      appendLog(event.data);
     };
 
     ws.onerror = (error) => {
-      setLogs(prev => prev + `[WebSocket Error] ${error.message || "Unknown error"}\n`);
+      appendLog(`[WebSocket Error] ${error.message || "Unknown error"}`);
     };
 
     ws.onclose = () => {
       setIsConnected(false);
-      setLogs(prev => prev + "[Process Completed / Disconnected]\n");
+      appendLog("[Process Completed / Disconnected]");
     };
 
     wsRef.current = ws;
-  }, []);
+  }, [appendLog]);
 
   /**
    * Effect hook to listen for a cross-component trigger to run a command.
