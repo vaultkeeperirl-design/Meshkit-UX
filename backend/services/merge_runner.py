@@ -5,12 +5,25 @@ from fastapi import WebSocket
 from typing import Dict, Any
 
 class MergeRunner:
+    """
+    Manages the execution of background shell processes (e.g., mergekit, llama.cpp)
+    and the generation of merge configuration files.
+    It maintains the state of the active process to allow for cancellation.
+    """
     def __init__(self):
         self.active_process = None
 
     async def generate_yaml(self, config_data: Dict[str, Any], output_path: str = "merge_config.yml") -> str:
-        # Convert our UI JSON into the exact format mergekit expects
+        """
+        Converts the UI JSON configuration into the exact YAML format expected by mergekit.
 
+        Args:
+            config_data (Dict[str, Any]): The merge configuration payload from the frontend.
+            output_path (str, optional): The file path where the YAML will be saved. Defaults to "merge_config.yml".
+
+        Returns:
+            str: The output path where the YAML configuration was saved.
+        """
         # Mapping UI models to mergekit format
         models_formatted = []
         for model in config_data.get("models", []):
@@ -82,6 +95,10 @@ class MergeRunner:
                 self.active_process = None
 
     async def cancel_process(self):
+        """
+        Gracefully terminates and then forces termination of the currently active
+        subprocess if one exists. Uses asyncio to ensure non-blocking execution.
+        """
         if self.active_process:
             try:
                 self.active_process.terminate()
