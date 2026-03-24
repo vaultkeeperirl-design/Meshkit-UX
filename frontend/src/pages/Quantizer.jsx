@@ -163,16 +163,6 @@ export default function Quantizer() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="inputF16Path" className="block text-sm font-medium leading-6 text-white">Input F16 GGUF Path</label>
-            <input
-              id="inputF16Path"
-              type="text"
-              value={f16Path}
-              onChange={handleF16PathChange}
-              className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
-            />
-          </div>
-          <div>
             <label htmlFor="quantType" className="block text-sm font-medium leading-6 text-white">Quantization Type</label>
             <select
                 id="quantType"
