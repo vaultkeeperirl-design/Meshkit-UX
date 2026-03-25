@@ -20,6 +20,19 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   const wsRef = useRef(null);
   const logEndRef = useRef(null);
 
+  // Buffers for batching state updates
+  const logBufferRef = useRef([]);
+  const rafRef = useRef(null);
+
+  useEffect(() => {
+    // Cleanup pending animation frames on unmount
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     // Auto scroll to bottom when new logs arrive
     if (logEndRef.current) {
@@ -48,7 +61,19 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
     };
 
     ws.onmessage = (event) => {
-      setLogs(prev => prev + event.data + "\n");
+      // Performance optimization: Batch rapid incoming websocket messages using
+      // a buffer and requestAnimationFrame to prevent state update thrashing
+      // and excessive string reallocations.
+      logBufferRef.current.push(event.data + "\n");
+
+      if (!rafRef.current) {
+        rafRef.current = requestAnimationFrame(() => {
+          const newLogs = logBufferRef.current.join("");
+          setLogs(prev => prev + newLogs);
+          logBufferRef.current = [];
+          rafRef.current = null;
+        });
+      }
     };
 
     ws.onerror = (error) => {
