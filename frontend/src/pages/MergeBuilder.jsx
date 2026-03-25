@@ -154,7 +154,7 @@ export default function MergeBuilder() {
 
   const handleModelChange = (index, field, value) => {
     const newModels = [...models];
-    newModels[index][field] = value;
+    newModels[index] = { ...newModels[index], [field]: value };
     setModels(newModels);
   };
 
