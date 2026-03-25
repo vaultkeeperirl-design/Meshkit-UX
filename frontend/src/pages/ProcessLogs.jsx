@@ -92,7 +92,7 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   };
 
   return (
-    <div className={`space-y-4 flex flex-col h-full ${isCompact ? '' : 'p-6'}`}>
+    <div className={`flex flex-col h-full ${isCompact ? '' : 'p-6 space-y-4'}`}>
       {!isCompact && (
         <div className="border-b border-slate-700 pb-5">
           <h2 className="text-2xl font-semibold leading-6 text-white">Process & Logs</h2>
@@ -102,31 +102,50 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
         </div>
       )}
 
-      <div className="flex gap-4 mb-2">
-         <button
-          onClick={handleStartMerge}
-          disabled={isConnected}
-          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
-         >
-          <Play size={16} /> Start Merge Job
-         </button>
+      {isCompact ? (
+        <div className="flex justify-end gap-2 mb-2 shrink-0">
+          <button
+            onClick={handleStartMerge}
+            disabled={isConnected}
+            className="flex items-center gap-1.5 rounded-md bg-blue-500/10 text-blue-400 px-3 py-1.5 text-xs font-semibold hover:bg-blue-500/20 hover:text-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border border-blue-500/20"
+          >
+            <Play size={14} /> Start Merge Job
+          </button>
+          <button
+            onClick={stopProcess}
+            disabled={!isConnected}
+            className="flex items-center gap-1.5 rounded-md bg-red-500/10 text-red-400 px-3 py-1.5 text-xs font-semibold hover:bg-red-500/20 hover:text-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border border-red-500/20"
+          >
+            <StopCircle size={14} /> Stop Process
+          </button>
+        </div>
+      ) : (
+        <div className="flex gap-4 mb-2 shrink-0">
+           <button
+            onClick={handleStartMerge}
+            disabled={isConnected}
+            className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
+           >
+            <Play size={16} /> Start Merge Job
+           </button>
 
-         <button
-          onClick={stopProcess}
-          disabled={!isConnected}
-          className="flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
-         >
-          <StopCircle size={16} /> Stop Process
-         </button>
-      </div>
+           <button
+            onClick={stopProcess}
+            disabled={!isConnected}
+            className="flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
+           >
+            <StopCircle size={16} /> Stop Process
+           </button>
+        </div>
+      )}
 
-      <div className={`flex-1 flex flex-col ${isCompact ? 'bg-black min-h-0' : 'bg-slate-950 p-6 rounded-xl border border-slate-700 min-h-[500px]'}`}>
+      <div className={`flex-1 flex flex-col min-h-0 ${isCompact ? 'bg-transparent' : 'bg-slate-950 p-6 rounded-xl border border-slate-700 min-h-[500px]'}`}>
         {!isCompact && (
-          <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2 flex items-center gap-2">
+          <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2 flex items-center gap-2 shrink-0">
               <Terminal size={16} /> Terminal Output
           </h3>
         )}
-        <div className={`text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto ${isCompact ? 'p-2' : 'bg-black p-4 rounded-lg'}`}>
+        <div className={`text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto ${isCompact ? 'p-0' : 'bg-black p-4 rounded-lg'}`}>
           {logs.length === 0 ? (
              <span className="text-slate-400">No active process. Ready...</span>
           ) : (
