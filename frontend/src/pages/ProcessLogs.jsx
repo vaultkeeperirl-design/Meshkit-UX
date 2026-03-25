@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, memo, useCallback } from "react";
-import { Terminal, Play, StopCircle } from "lucide-react";
+import { Terminal, Play, StopCircle, Loader2 } from "lucide-react";
 
 /**
  * A memoized component that displays real-time process logs via a WebSocket connection.
@@ -17,6 +17,7 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   // avoids rendering thousands of individual <div> DOM nodes which freezes the main thread.
   const [logs, setLogs] = useState("");
   const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const wsRef = useRef(null);
   const logEndRef = useRef(null);
 
@@ -38,10 +39,12 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
         wsRef.current.close();
     }
     setLogs(`Connecting to backend for action: ${cmdObject.action}...\n`);
+    setIsConnecting(true);
 
     const ws = new WebSocket("ws://localhost:8000/api/ws/logs");
 
     ws.onopen = () => {
+      setIsConnecting(false);
       setIsConnected(true);
       setLogs(prev => prev + "Connected. Starting process...\n");
       ws.send(JSON.stringify(cmdObject));
@@ -52,10 +55,12 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
     };
 
     ws.onerror = (error) => {
+      setIsConnecting(false);
       setLogs(prev => prev + `[WebSocket Error] ${error.message || "Unknown error"}\n`);
     };
 
     ws.onclose = () => {
+      setIsConnecting(false);
       setIsConnected(false);
       setLogs(prev => prev + "[Process Completed / Disconnected]\n");
     };
@@ -105,10 +110,11 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
       <div className="flex gap-4 mb-2">
          <button
           onClick={handleStartMerge}
-          disabled={isConnected}
+          disabled={isConnected || isConnecting}
           className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
          >
-          <Play size={16} /> Start Merge Job
+          {isConnecting ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
+          {isConnecting ? "Connecting..." : "Start Merge Job"}
          </button>
 
          <button
