@@ -126,7 +126,12 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
               <Terminal size={16} /> Terminal Output
           </h3>
         )}
-        <div className={`text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto ${isCompact ? 'p-2' : 'bg-black p-4 rounded-lg'}`}>
+        <div
+          className={`text-sm text-green-400 font-mono whitespace-pre-wrap flex-1 overflow-auto focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset ${isCompact ? 'p-2' : 'bg-black p-4 rounded-lg'}`}
+          tabIndex={0}
+          role="log"
+          aria-live="polite"
+        >
           {logs.length === 0 ? (
              <span className="text-slate-400">No active process. Ready...</span>
           ) : (
