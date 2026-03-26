@@ -70,7 +70,7 @@ export default function Layout() {
               <button
                 onClick={() => setOpenView(null)}
                 aria-label="Close modal"
-                className="absolute top-4 right-4 text-slate-400 hover:text-white z-50 bg-slate-800/80 rounded-full p-1 transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="absolute top-4 right-4 text-slate-400 hover:text-white hover:bg-slate-700/80 z-50 bg-slate-800/80 rounded-full p-1.5 transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <X size={24} />
               </button>
