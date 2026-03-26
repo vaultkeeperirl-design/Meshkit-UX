@@ -19,6 +19,8 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
   const logEndRef = useRef(null);
+  const logBuffer = useRef([]);
+  const animationFrameId = useRef(null);
 
   useEffect(() => {
     // Auto scroll to bottom when new logs arrive
@@ -41,26 +43,50 @@ const ProcessLogs = memo(function ProcessLogs({ isCompact }) {
 
     const ws = new WebSocket("ws://localhost:8000/api/ws/logs");
 
+    const flushLogs = () => {
+      if (logBuffer.current.length > 0) {
+        const newLogs = logBuffer.current.join('');
+        logBuffer.current = [];
+        setLogs(prev => prev + newLogs);
+      }
+      animationFrameId.current = null;
+    };
+
+    const queueLog = (message) => {
+      logBuffer.current.push(message + "\n");
+      if (!animationFrameId.current) {
+        animationFrameId.current = requestAnimationFrame(flushLogs);
+      }
+    };
+
     ws.onopen = () => {
       setIsConnected(true);
-      setLogs(prev => prev + "Connected. Starting process...\n");
+      queueLog("Connected. Starting process...");
       ws.send(JSON.stringify(cmdObject));
     };
 
     ws.onmessage = (event) => {
-      setLogs(prev => prev + event.data + "\n");
+      queueLog(event.data);
     };
 
     ws.onerror = (error) => {
-      setLogs(prev => prev + `[WebSocket Error] ${error.message || "Unknown error"}\n`);
+      queueLog(`[WebSocket Error] ${error.message || "Unknown error"}`);
     };
 
     ws.onclose = () => {
       setIsConnected(false);
-      setLogs(prev => prev + "[Process Completed / Disconnected]\n");
+      queueLog("[Process Completed / Disconnected]");
     };
 
     wsRef.current = ws;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
   }, []);
 
   /**
