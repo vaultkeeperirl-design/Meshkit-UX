@@ -28,7 +28,7 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
                     aria-controls="tabpanel-yaml"
                     onClick={() => setActiveTab("yaml")}
                     className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded-t-md ${
-                        activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-400 border-b-2 border-transparent hover:text-slate-300"
+                        activeTab === "yaml" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-400 border-b-2 border-transparent hover:text-slate-300 hover:bg-slate-800/50"
                     }`}
                 >
                     YAML Output
@@ -40,7 +40,7 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
                     aria-controls="tabpanel-logs"
                     onClick={() => setActiveTab("logs")}
                     className={`px-4 py-2 text-sm font-medium uppercase tracking-wider transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded-t-md ${
-                        activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-400 border-b-2 border-transparent hover:text-slate-300"
+                        activeTab === "logs" ? "text-blue-400 border-b-2 border-blue-500" : "text-slate-400 border-b-2 border-transparent hover:text-slate-300 hover:bg-slate-800/50"
                     }`}
                 >
                     Process & Logs
@@ -56,7 +56,7 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
                         }
                     }}
                     disabled={!yamlPreview}
-                    className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 mr-2"
+                    className="text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1.5 mr-2"
                     aria-label="Copy YAML to clipboard"
                     title="Copy YAML"
                 >
