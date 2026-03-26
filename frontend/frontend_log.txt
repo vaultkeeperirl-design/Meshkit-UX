@@ -1,0 +1,19 @@
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v7.3.1  ready in 382 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+4:01:54 AM [vite] (client) warning: Duplicate "autoFocus" attribute in JSX element
+318 |                      placeholder="e.g. NousResearch/Hermes-2-Pro-Llama-3-8B"
+319 |                      className="mt-2 block w-full rounded-md border-0 bg-slate-800 py-1.5 px-3 text-white ring-1 ring-...
+320 |                      autoFocus={idx === models.length - 1 && idx > 1} />
+    |                      ^
+321 |
+322 |                    </div>
+
+  Plugin: vite:esbuild
+  File: /app/frontend/src/pages/MergeBuilder.jsx
