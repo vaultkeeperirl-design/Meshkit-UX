@@ -56,11 +56,21 @@ const CompactOutputPanel = memo(function CompactOutputPanel({ yamlPreview, copie
                         }
                     }}
                     disabled={!yamlPreview}
-                    className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 mr-2"
+                    className="flex items-center gap-1.5 text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-2 py-1 mr-2 hover:bg-slate-800"
                     aria-label="Copy YAML to clipboard"
                     title="Copy YAML"
                 >
-                    {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    {copied ? (
+                        <>
+                            <Check size={16} className="text-green-500" />
+                            <span className="text-sm font-medium text-green-500">Copied!</span>
+                        </>
+                    ) : (
+                        <>
+                            <Copy size={16} />
+                            <span className="text-sm font-medium">Copy</span>
+                        </>
+                    )}
                 </button>
             )}
         </div>
