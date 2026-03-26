@@ -33,3 +33,7 @@
 ## 2025-02-28 - [Extract Stateless Helpers in React to Prevent Reallocation]
 **Learning:** Discovered a codebase-specific pattern where extracting stateless helper functions, like `getBaseName` in `Quantizer.jsx`, to the module scope (outside the component function) avoids unnecessary memory reallocation on every keystroke when typing into text fields.
 **Action:** Always scan for helper functions that don't depend on component props or state, and extract them outside of the React component body to reduce garbage collection overhead during rapid parent state updates.
+
+## 2025-03-05 - [Batch React State Updates with requestAnimationFrame]
+**Learning:** Updating state immediately on every incoming high-frequency WebSocket message (e.g., process logs) causes severe UI freezing and O(N) memory reallocations, even when using string concatenation.
+**Action:** Use a `useRef` array to buffer incoming string chunks and batch the actual React state updates using `requestAnimationFrame`. This limits state updates to the display's refresh rate (typically 60fps), resolving UI lockups. Ensure `cancelAnimationFrame` is called on component unmount to prevent memory leaks.
