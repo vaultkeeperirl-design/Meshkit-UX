@@ -7,7 +7,19 @@ _client = httpx.AsyncClient()
 async def get_model_config(model_id: str, token: str = None) -> dict:
     """
     Fetches the config.json for a HuggingFace model without downloading the weights.
-    Returns basic architecture details for visualization and compatibility checks.
+
+    Retrieves basic architecture details directly from the HuggingFace API for use
+    in UI visualization and compatibility checks. Returns an error dictionary if
+    the fetch or parsing fails.
+
+    Args:
+        model_id (str): The identifier of the HuggingFace model (e.g., 'meta-llama/Meta-Llama-3-8B').
+        token (str, optional): A HuggingFace API token to access gated or private models.
+            Defaults to None.
+
+    Returns:
+        dict: A dictionary containing either the extracted architectural features (like
+            'num_layers' and 'hidden_size') or an 'error' key detailing why the request failed.
     """
     headers = {"Authorization": f"Bearer {token}"} if token else {}
     url = f"https://huggingface.co/{model_id}/resolve/main/config.json"
