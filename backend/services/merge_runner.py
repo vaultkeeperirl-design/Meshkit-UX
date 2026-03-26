@@ -5,10 +5,32 @@ from fastapi import WebSocket
 from typing import Dict, Any
 
 class MergeRunner:
+    """
+    Manages the generation of merge configuration files and the execution of external commands.
+
+    This class handles converting UI configuration data into the YAML format expected by mergekit,
+    and running shell commands (like mergekit-yaml or llama.cpp scripts) while streaming their
+    output over a WebSocket.
+    """
     def __init__(self):
         self.active_process = None
 
     async def generate_yaml(self, config_data: Dict[str, Any], output_path: str = "merge_config.yml") -> str:
+        """
+        Generates a YAML configuration file for mergekit based on UI data.
+
+        Converts the provided configuration data into the exact format expected by mergekit
+        and writes it to a file asynchronously.
+
+        Args:
+            config_data (Dict[str, Any]): The configuration data containing merge parameters,
+                models, and methods.
+            output_path (str, optional): The file path where the YAML will be saved.
+                Defaults to "merge_config.yml".
+
+        Returns:
+            str: The path to the generated YAML file.
+        """
         # Convert our UI JSON into the exact format mergekit expects
 
         # Mapping UI models to mergekit format
@@ -42,7 +64,25 @@ class MergeRunner:
         return output_path
 
     async def run_command_with_websocket(self, cmd: list, websocket: WebSocket, env: dict = None, task_name: str = "Process"):
-        """Runs a shell command and streams its output (stdout and stderr) to a websocket client."""
+        """
+        Runs a shell command and streams its output to a WebSocket client.
+
+        Executes the given command as a subprocess, captures its standard output and standard
+        error, and sends each line to the connected WebSocket. Handles client disconnection
+        by canceling the running process.
+
+        Args:
+            cmd (list): The command and its arguments to execute as a list of strings.
+            websocket (WebSocket): The active WebSocket connection to stream output to.
+            env (dict, optional): A dictionary of environment variables for the subprocess.
+                Defaults to None.
+            task_name (str, optional): A descriptive name for the task, used in log messages.
+                Defaults to "Process".
+
+        Raises:
+            Exception: If an error occurs during subprocess creation or streaming (other than
+                WebSocket disconnections which are handled gracefully).
+        """
         process = await asyncio.create_subprocess_exec(
             *cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -82,6 +122,12 @@ class MergeRunner:
                 self.active_process = None
 
     async def cancel_process(self):
+        """
+        Cancels the currently running subprocess.
+
+        Attempts to gracefully terminate the active process, waits for a short duration,
+        and then forcefully kills it if it is still alive. Clears the active process reference.
+        """
         if self.active_process:
             try:
                 self.active_process.terminate()
