@@ -226,7 +226,7 @@ export default function MergeBuilder() {
   return (
     <div className="h-full flex flex-col lg:flex-row">
       {/* Left Area: Main Content */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 md:p-8 space-y-8">
+      <div tabIndex={0} className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 md:p-8 space-y-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset">
         <div className="border-b border-slate-700 pb-5 shrink-0">
           <h2 className="text-2xl font-semibold leading-6 text-white">Merge Builder</h2>
           <p className="mt-2 max-w-4xl text-sm text-slate-400">
@@ -317,7 +317,6 @@ export default function MergeBuilder() {
                       onChange={(e) => handleModelChange(idx, "model_id", e.target.value)}
                       placeholder="e.g. NousResearch/Hermes-2-Pro-Llama-3-8B"
                       className="mt-2 block w-full rounded-md border-0 bg-slate-800 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-600 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
-                      autoFocus={idx === models.length - 1 && idx > 1}
                     />
                   </div>
                   <div>
@@ -381,7 +380,7 @@ export default function MergeBuilder() {
       </div>
 
       {/* Right Sidebar */}
-      <div className="w-full lg:w-[450px] xl:w-[500px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/50 p-4 md:p-6 flex flex-col h-full overflow-y-auto shrink-0 space-y-6 z-10 shadow-2xl">
+      <div tabIndex={0} className="w-full lg:w-[450px] xl:w-[500px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/50 p-4 md:p-6 flex flex-col h-full overflow-y-auto shrink-0 space-y-6 z-10 shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset">
             <DynamicVisualizer
                 method={method}
                 baseModel={baseModel}
