@@ -265,6 +265,7 @@ export default function MergeBuilder() {
                   id="baseModel"
                   type="text"
                   value={baseModel}
+                  autoFocus
                   onChange={(e) => setBaseModel(e.target.value)}
                   placeholder="e.g. meta-llama/Meta-Llama-3-8B"
                   className="mt-2 block w-full rounded-md border-0 bg-slate-900 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-700 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
@@ -313,7 +314,6 @@ export default function MergeBuilder() {
                       id={`modelId-${idx}`}
                       type="text"
                       value={m.model_id}
-                      autoFocus={idx > 1 && idx === models.length - 1}
                       onChange={(e) => handleModelChange(idx, "model_id", e.target.value)}
                       placeholder="e.g. NousResearch/Hermes-2-Pro-Llama-3-8B"
                       className="mt-2 block w-full rounded-md border-0 bg-slate-800 py-1.5 px-3 text-white ring-1 ring-inset ring-slate-600 transition-all duration-200 hover:ring-slate-500 focus:ring-2 focus:ring-blue-500 sm:text-sm sm:leading-6"
