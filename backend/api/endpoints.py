@@ -16,26 +16,67 @@ runner = MergeRunner()
 SETTINGS_FILE = "settings.json"
 
 def load_settings():
+    """
+    Loads global application settings from a local JSON file.
+
+    Returns:
+        dict: A dictionary containing the settings. If the file does not exist,
+              returns a default dictionary with an empty 'hf_token'.
+    """
     if os.path.exists(SETTINGS_FILE):
         with open(SETTINGS_FILE, "r") as f:
             return json.load(f)
     return {"hf_token": ""}
 
 def save_settings(settings):
+    """
+    Saves global application settings to a local JSON file.
+
+    Args:
+        settings (dict): The settings dictionary to save.
+    """
     with open(SETTINGS_FILE, "w") as f:
         json.dump(settings, f)
 
 @router.get("/settings")
 def get_settings():
+    """
+    API endpoint to retrieve the current application settings.
+
+    Returns:
+        dict: The current settings.
+    """
     return load_settings()
 
 @router.post("/settings")
 def update_settings(settings: dict):
+    """
+    API endpoint to update the application settings.
+
+    Args:
+        settings (dict): The new settings payload to save.
+
+    Returns:
+        dict: A status message confirming the save operation.
+    """
     save_settings(settings)
     return {"status": "Settings saved"}
 
 @router.post("/hf/config")
 async def get_hf_config(req: HFConfigReq):
+    """
+    API endpoint to fetch a HuggingFace model's configuration (config.json)
+    without downloading its weights. Used for compatibility checking.
+
+    Args:
+        req (HFConfigReq): The request object containing the model_id and an optional token.
+
+    Returns:
+        dict: The model's configuration details (e.g., hidden size, layers).
+
+    Raises:
+        HTTPException: If the model configuration cannot be fetched or an error occurs.
+    """
     settings = await asyncio.to_thread(load_settings)
     token = req.token or settings.get("hf_token", "")
 
@@ -47,6 +88,17 @@ async def get_hf_config(req: HFConfigReq):
 
 @router.post("/merge/generate-config")
 async def generate_merge_config(req: MergeConfigReq):
+    """
+    API endpoint to generate a mergekit-compatible YAML configuration file
+    based on the visual builder's input.
+
+    Args:
+        req (MergeConfigReq): The parsed configuration data from the UI.
+
+    Returns:
+        dict: A dictionary containing the path to the generated YAML file
+              and its string content.
+    """
     yaml_path = await runner.generate_yaml(req.dict(), output_path="merge_config.yml")
 
     def _read_yaml():
@@ -58,6 +110,14 @@ async def generate_merge_config(req: MergeConfigReq):
 
 @router.websocket("/ws/logs")
 async def websocket_logs(websocket: WebSocket):
+    """
+    WebSocket endpoint that establishes a real-time connection to stream the
+    stdout and stderr of background shell processes (like merging or quantizing)
+    to the frontend terminal UI.
+
+    Args:
+        websocket (WebSocket): The active WebSocket connection.
+    """
     await websocket.accept()
     # Each connection gets its own MergeRunner to track its own subprocess
     local_runner = MergeRunner()

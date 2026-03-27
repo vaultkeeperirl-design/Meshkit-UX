@@ -5,10 +5,31 @@ from fastapi import WebSocket
 from typing import Dict, Any
 
 class MergeRunner:
+    """
+    Service class responsible for managing and executing background operations
+    such as creating merge configurations and running shell commands
+    (like `mergekit-yaml` or `llama-quantize`) asynchronously.
+    """
+
     def __init__(self):
+        """
+        Initializes the MergeRunner instance.
+        Sets the active process reference to None.
+        """
         self.active_process = None
 
     async def generate_yaml(self, config_data: Dict[str, Any], output_path: str = "merge_config.yml") -> str:
+        """
+        Translates the JSON-based model configurations from the UI into a valid
+        mergekit-compatible YAML format and saves it to a file asynchronously.
+
+        Args:
+            config_data (Dict[str, Any]): The merged model and parameters data from the API request.
+            output_path (str): The destination path for the generated YAML file. Defaults to "merge_config.yml".
+
+        Returns:
+            str: The file path to the successfully created YAML configuration.
+        """
         # Convert our UI JSON into the exact format mergekit expects
 
         # Mapping UI models to mergekit format
@@ -42,7 +63,19 @@ class MergeRunner:
         return output_path
 
     async def run_command_with_websocket(self, cmd: list, websocket: WebSocket, env: dict = None, task_name: str = "Process"):
-        """Runs a shell command and streams its output (stdout and stderr) to a websocket client."""
+        """
+        Asynchronously executes a shell command, binds it to the instance's active process,
+        and continually streams its standard output (stdout/stderr) over a WebSocket connection.
+
+        Args:
+            cmd (list): The command and its arguments to execute (e.g., ["ls", "-l"]).
+            websocket (WebSocket): An active WebSocket connection to stream output lines to.
+            env (dict, optional): A dictionary of environment variables. Defaults to None.
+            task_name (str): A logical name for the running task used in logging. Defaults to "Process".
+
+        Raises:
+            Exception: Re-raises exceptions if reading output or streaming fails unexpectedly.
+        """
         process = await asyncio.create_subprocess_exec(
             *cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -82,6 +115,11 @@ class MergeRunner:
                 self.active_process = None
 
     async def cancel_process(self):
+        """
+        Gracefully attempts to terminate the currently active shell process.
+        If the process does not exit within 1 second, forcefully kills it.
+        Resets the active process state to None.
+        """
         if self.active_process:
             try:
                 self.active_process.terminate()
