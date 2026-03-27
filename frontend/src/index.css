@@ -6,3 +6,29 @@ body {
   background-color: #0f172a; /* Slate 900 */
   color: #f8fafc; /* Slate 50 */
 }
+
+/* Custom scrollbar for dark theme consistency */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a; /* Slate 900 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155; /* Slate 700 */
+  border-radius: 5px;
+  border: 2px solid #0f172a; /* Slate 900 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* Slate 600 */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #0f172a;
+}
