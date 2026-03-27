@@ -112,7 +112,7 @@ jobs:
       working-directory: backend
       shell: bash
       run: |
-        export PYTHONPATH="$(pwd)"
+        export PYTHONPATH=.
         pytest tests/
 
     - name: Build PyInstaller Backend
