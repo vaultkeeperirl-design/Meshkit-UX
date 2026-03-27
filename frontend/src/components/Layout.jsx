@@ -74,7 +74,7 @@ export default function Layout() {
               >
                 <X size={24} />
               </button>
-              <div className="overflow-y-auto p-8 flex-1">
+              <div tabIndex={0} className="overflow-y-auto p-8 flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset">
                 {openView === "quantizer" && <Quantizer />}
                 {openView === "settings" && <SettingsPage />}
               </div>
